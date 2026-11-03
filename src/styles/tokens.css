@@ -1,0 +1,19 @@
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: sticky hero (photo in nebula, name → dust) → chapters that each change layout, background tint and transition style → supernova into "Now" → centered team motto → sticky contact where the name re-forms. Single deliberate dark-plum theme. */
+:root {
+  --bg: #0B0612;
+  --surface: rgba(22, 12, 38, 0.58);
+  --surface-strong: rgba(18, 10, 31, 0.84);
+  --line: rgba(196, 181, 253, 0.26);
+  --text: #F6F2FD;
+  --muted: #CEC3E6;
+  --accent: #C4B5FD;
+  --serif: "Cormorant Garamond", "Gowun Batang", Georgia, serif;
+  --sans: "Albert Sans", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ko: "Gowun Batang", "Cormorant Garamond", serif;
+  --glow: 139, 92, 246;
+  --gx: 50%;
+  --gy: 40%;
+  color-scheme: dark;
+}

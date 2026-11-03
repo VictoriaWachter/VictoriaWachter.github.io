@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Victoria Wachter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Gowun+Batang&family=Bodoni+Moda:ital,wght@1,500&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500&display=swap">
+<style>
+/* Layout: sticky hero (photo in nebula, name → dust) → chapters that each change layout, background tint and transition style → supernova into "Now" → centered team motto → sticky contact where the name re-forms. Single deliberate dark-plum theme. */
+:root {
+  --bg: #0B0612;
+  --surface: rgba(22, 12, 38, 0.58);
+  --surface-strong: rgba(18, 10, 31, 0.84);
+  --line: rgba(196, 181, 253, 0.16);
+  --text: #EDE6FA;
+  --muted: #A99BC4;
+  --accent: #C4B5FD;
+  --serif: "Cormorant Garamond", "Gowun Batang", Georgia, serif;
+  --sans: "Albert Sans", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ko: "Gowun Batang", "Cormorant Garamond", serif;
+  --glow: 139, 92, 246;
+  --gx: 50%;
+  --gy: 40%;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+:lang(ko) .card h2, :lang(ko) .motto, :lang(ko) .contact h2 { font-family: var(--ko); font-weight: 400; letter-spacing: -.02em; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* fixed layers */
+.glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(55% 48% at var(--gx) var(--gy), rgba(var(--glow), 0.22), transparent 70%),
+    radial-gradient(90% 70% at 50% 120%, rgba(76, 29, 149, 0.16), transparent 70%);
+}
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; display: block; }
+.flash {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0;
+  background: radial-gradient(40% 40% at var(--gx) 50%, rgba(255,245,255,.9), rgba(240,171,252,.45) 35%, transparent 75%);
+  mix-blend-mode: screen;
+}
+#nameCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+.shock {
+  position: fixed; z-index: 1; pointer-events: none; left: var(--gx); top: 50%;
+  width: 42vmin; height: 42vmin; border-radius: 50%; opacity: 0;
+  border: 2px solid rgba(253,244,255,.85);
+  box-shadow: 0 0 30px 6px rgba(240,171,252,.55), inset 0 0 30px 6px rgba(240,171,252,.35);
+  transform: translate(-50%, -50%) scale(.2);
+}
+main { position: relative; z-index: 2; }
+
+.badge {
+  position: fixed; z-index: 6;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: max(16px, env(safe-area-inset-left, 0px));
+  font-family: var(--mono); font-size: 11px; letter-spacing: .04em;
+  color: var(--muted); background: var(--surface-strong);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  max-width: calc(100vw - 170px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topright {
+  position: fixed; z-index: 6;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px;
+  max-width: calc(100vw - 32px);
+}
+.langs, .jumps {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--surface-strong); border: 1px solid var(--line); border-radius: 999px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.jumps button { color: var(--text); }
+.jumps button:hover { background: rgba(196,181,253,.18); }
+.langs button, .jumps button {
+  font-family: var(--mono); font-size: 12px; color: var(--muted); background: transparent;
+  border: 0; border-radius: 999px; padding: 5px 11px; cursor: pointer; transition: background .25s, color .25s;
+}
+.langs button:hover { color: var(--text); }
+.langs button[aria-pressed="true"] { background: rgba(196,181,253,.18); color: #fff; }
+
+/* constellation of real stars */
+.sky {
+  position: fixed; z-index: 6; top: 50%; transform: translateY(-50%);
+  right: max(12px, calc(env(safe-area-inset-right, 0px) + 12px));
+  width: 40px;
+}
+.sky svg { display: block; overflow: visible; }
+.sky .trail { fill: none; stroke: rgba(196,181,253,.45); stroke-width: 1; stroke-linecap: round; }
+.sky .ghost { fill: none; stroke: rgba(196,181,253,.1); stroke-width: 1; stroke-dasharray: 2 4; }
+.st path { fill: #6F6390; transform-box: fill-box; transform-origin: center; transform: scale(.5); transition: transform .5s, fill .5s, filter .5s; }
+.st.seen path { fill: #D8CCF7; transform: scale(.68); }
+.st.on path { fill: #fff; transform: scale(1.12); filter: drop-shadow(0 0 3px rgb(var(--glow))) drop-shadow(0 0 9px rgba(var(--glow), .8)); animation: twinkle 2.6s ease-in-out infinite; }
+.st .ring { fill: none; stroke: #FDF4FF; stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.st.nova .ring { animation: nova 1.5s cubic-bezier(.1,.6,.3,1) forwards; }
+.st.nova path { fill: #F0ABFC; transform: scale(.42); filter: drop-shadow(0 0 5px #E879F9) drop-shadow(0 0 12px rgba(232,121,249,.6)); }
+@keyframes twinkle { 50% { transform: scale(.92) rotate(12deg); } }
+@keyframes nova { 0% { opacity: 1; transform: scale(.3); stroke-width: 3; } 100% { opacity: 0; transform: scale(6); stroke-width: .4; } }
+.sky.peek button span { opacity: 1; }
+@media (min-width: 761px) { .sky button.on span { opacity: .9; } }
+.sky button {
+  position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; padding: 0;
+  background: transparent; border: 0; border-radius: 50%; cursor: pointer;
+}
+.sky button span {
+  position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 11px; color: var(--text); white-space: nowrap;
+  background: var(--surface-strong); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.sky button:hover span, .sky button:focus-visible span { opacity: 1; }
+
+/* hero */
+.hero { position: relative; height: 190vh; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.fog { position: absolute; left: 50%; top: 36%; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); filter: blur(40px); }
+.fog.f1 { width: 560px; height: 560px; background: radial-gradient(circle, rgba(139,92,246,.42), transparent 66%); animation: drift1 16s ease-in-out infinite alternate; }
+.fog.f2 { width: 380px; height: 440px; background: radial-gradient(circle, rgba(232,121,249,.22), transparent 65%); animation: drift2 21s ease-in-out infinite alternate; }
+.fog.f3 { width: 700px; height: 300px; top: 62%; background: radial-gradient(ellipse, rgba(76,29,149,.5), transparent 70%); }
+@keyframes drift1 { to { transform: translate(-44%, -54%) scale(1.08); } }
+@keyframes drift2 { to { transform: translate(-58%, -44%) scale(.92); } }
+.portrait {
+  position: absolute; left: 50%; top: 12%;
+  width: min(300px, 58vw, 33vh); max-width: 100%; aspect-ratio: 3 / 4;
+  transform: translateX(-50%) scale(var(--ps, 1));
+  opacity: var(--po, 1); filter: blur(var(--pb, 0px));
+}
+.arch {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border-radius: 999px 999px 28px 28px;
+  background: radial-gradient(120% 80% at 50% 20%, #3a1f63 0%, #1d0f33 55%, #12091f 100%);
+  -webkit-mask-image: radial-gradient(ellipse 74% 70% at 50% 42%, #000 56%, transparent 100%);
+  mask-image: radial-gradient(ellipse 74% 70% at 50% 42%, #000 56%, transparent 100%);
+}
+.arch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.arch img[hidden], .upload[hidden], .photo-ph[hidden] { display: none; }
+.photo-ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 24px 28%; }
+.photo-ph small { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.upload {
+  position: relative; font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer;
+  background: rgba(196,181,253,.12); border: 1px solid rgba(196,181,253,.35); border-radius: 999px; padding: 8px 16px; transition: background .2s;
+}
+.upload:hover { background: rgba(196,181,253,.22); }
+.upload:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.change { position: absolute; z-index: 5; left: max(16px, env(safe-area-inset-left, 0px)); bottom: 22px; font-size: 12px; padding: 6px 12px; }
+.hero-copy {
+  position: absolute; left: 0; right: 0; top: 82%; text-align: center; display: grid; gap: 6px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  opacity: var(--to, 1);
+}
+.hero-copy .role { font-family: var(--mono); font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.hero-copy .line { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.1rem, 2.2vw, 1.45rem); color: var(--muted); margin: 0; }
+:lang(ko) .hero-copy .line { font-family: var(--ko); font-style: normal; font-size: clamp(1rem, 2vw, 1.25rem); }
+.cue { position: absolute; left: 50%; bottom: 2.5%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); opacity: var(--to, 1); }
+.cue i { width: 1px; height: 30px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s ease-in-out infinite; transform-origin: top; }
+@keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* chapters: shared */
+.chapter { min-height: 125vh; display: flex; align-items: center; padding-block: 12vh; }
+.inner {
+  width: 100%; max-width: 1180px; margin: 0 auto; display: flex;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(56px, calc(env(safe-area-inset-right, 0px) + 52px));
+}
+.chapter[data-side="left"] .inner { justify-content: flex-start; }
+.chapter[data-side="right"] .inner { justify-content: flex-end; }
+.card {
+  width: 100%; max-width: 480px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+  padding: 36px 34px; display: grid; gap: 18px;
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+}
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--c, var(--accent)); margin: 0; }
+.card h2 { font-family: var(--serif); font-weight: 300; font-size: clamp(2.2rem, 4.4vw, 3.3rem); line-height: 1.04; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.meta { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.9; }
+.card p { margin: 0; max-width: 60ch; }
+.take { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
+.take > span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.take p { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.4; }
+.ph {
+  color: #D6CBEF; background: rgba(196,181,253,.08); border: 1px dashed rgba(196,181,253,.32);
+  border-radius: 6px; padding: 0 6px; font-style: normal;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.chip { font-family: var(--mono); font-size: 11px; border-radius: 999px; padding: 3px 10px; border: 1px solid currentColor; white-space: nowrap; }
+
+/* 01 admin: policy documents */
+.docs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.doc {
+  min-width: 0; border-radius: 4px 14px 4px 4px; padding: 16px 14px 18px; display: grid; gap: 8px; align-content: start;
+  background: linear-gradient(180deg, rgba(237,230,250,.07), rgba(237,230,250,.02));
+  border: 1px solid var(--line); position: relative;
+}
+.doc::after { content: ""; position: absolute; top: -1px; right: -1px; width: 16px; height: 16px; background: linear-gradient(225deg, var(--bg) 50%, rgba(196,181,253,.25) 50%); border-radius: 0 14px 0 0; }
+.doc small { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.doc strong { font-family: var(--serif); font-weight: 500; font-size: 1.3rem; line-height: 1.15; }
+:lang(ko) .doc strong { font-family: var(--ko); font-weight: 400; font-size: 1.1rem; }
+.doc i { display: block; height: 4px; border-radius: 2px; background: rgba(196,181,253,.14); }
+.doc i:nth-of-type(2) { width: 82%; } .doc i:nth-of-type(3) { width: 64%; }
+.doc span.ph { font-size: 13px; }
+.loc { justify-self: start; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 7px; font-size: 12.5px; color: #E9DFFF; padding: 4px 11px 4px 8px; border-radius: 999px; background: rgba(139,92,246,.16); border: 1px solid rgba(196,181,253,.3); }
+.loc svg { width: 13px; height: 13px; fill: #C4B5FD; flex: none; }
+.loc em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.med-list .loc { margin-block: 4px 2px; }
+.doc .doc-c { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+/* 02 medical: certificate */
+.card.cert { outline: 1px solid rgba(240,171,252,.22); outline-offset: -10px; position: relative; }
+.seal {
+  position: absolute; top: 22px; right: 22px; width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; color: #F0ABFC;
+  border: 1px solid rgba(240,171,252,.45); box-shadow: inset 0 0 0 4px rgba(240,171,252,.08);
+  transform: rotate(-12deg);
+}
+.cert h2 { padding-right: 60px; }
+.med-list { list-style: none; margin: 4px 0 0 4px; padding: 0 0 0 20px; display: grid; gap: 18px; border-left: 1px solid rgba(240,171,252,.3); }
+.med-list li { position: relative; display: grid; gap: 3px; min-width: 0; }
+.med-list li::before { content: ""; position: absolute; left: -25px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #F0ABFC; box-shadow: 0 0 8px rgba(240,171,252,.7); }
+.med-list strong { font-family: var(--serif); font-weight: 500; font-size: 1.4rem; line-height: 1.2; }
+:lang(ko) .med-list strong { font-family: var(--ko); font-weight: 400; font-size: 1.15rem; }
+.med-list .meta { line-height: 1.6; }
+.med-list p { margin: 0; font-size: 15px; }
+
+/* 03 languages: big type list */
+.card.langs-card { max-width: 540px; }
+.lang-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.lang-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 4px 16px; padding-block: 14px; border-top: 1px solid var(--line); }
+.lang-list li:first-child { border-top: 0; padding-top: 0; }
+.lang-list .name { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 3.4vw, 2.3rem); line-height: 1; }
+.lang-list .name.ko { font-family: var(--ko); font-size: clamp(1.5rem, 3vw, 2rem); }
+.lang-list .lvl { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: right; }
+.lang-list .bar { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: rgba(196,181,253,.12); overflow: hidden; }
+.lang-list .bar b { display: block; height: 100%; width: var(--w); background: linear-gradient(90deg, #8B5CF6, #C4B5FD); border-radius: 2px; }
+.lang-list li.minor .name { font-size: clamp(1.25rem, 2.4vw, 1.5rem); color: var(--muted); }
+.lang-list li.minor .bar b { background: rgba(196,181,253,.35); }
+
+/* 04 research: spreadsheet */
+.sheet-wrap { min-width: 0; }
+.sheet-wrap .sheet { border-bottom-left-radius: 0; }
+.sheet span.th { color: #A5B4FC; font-weight: 500; }
+.sheet span.v { font-variant-numeric: tabular-nums; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; font-family: var(--mono); font-size: 10px; }
+.tabs span { padding: 4px 9px; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 6px 6px; color: var(--muted); white-space: nowrap; }
+.tabs span.on { color: #C7D2FE; background: rgba(129,140,248,.15); }
+.sheet { display: grid; grid-template-columns: 26px minmax(0, 1.5fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.sheet span { height: 24px; display: grid; place-items: center; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.sheet span.h { background: rgba(165,180,252,.08); color: #A5B4FC; }
+.sheet span.v { justify-items: start; padding-left: 8px; color: #C7D2FE; }
+.sheet span.hl { background: rgba(129,140,248,.18); box-shadow: inset 0 0 0 1.5px #818CF8; }
+
+/* 05 now: design showcase */
+.now .card { max-width: 600px; padding: 40px 36px; }
+.now h2 { font-size: clamp(2.6rem, 5.6vw, 4.2rem) !important; }
+.tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.tile {
+  min-width: 0; border-radius: 14px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px 12px; flex-wrap: wrap;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(240,171,252,.2), transparent 60%),
+    rgba(11,6,18,.4);
+}
+.tile:nth-child(2) { background: radial-gradient(120% 90% at 0% 100%, rgba(139,92,246,.25), transparent 60%), rgba(11,6,18,.4); }
+.tile strong { font-weight: 600; font-size: 14px; line-height: 1.35; }
+.tile > div { min-width: 0; }
+.tile small { color: var(--muted); font-size: 13px; }
+.tile .chip { justify-self: start; }
+.chip.team { color: #A5B4FC; } .chip.prog { color: #F0ABFC; }
+.howto { border-top: 1px solid var(--line); }
+.howto summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0 6px; font-weight: 500; }
+.howto summary::-webkit-details-marker { display: none; }
+.howto summary i { font-style: normal; font-family: var(--mono); width: 28px; height: 28px; flex: none; border-radius: 50%; border: 1px solid rgba(196,181,253,.35); display: grid; place-items: center; transition: transform .3s, background .2s; }
+.howto summary:hover i { background: rgba(196,181,253,.14); }
+.howto[open] summary i { transform: rotate(45deg); }
+.how-body { display: grid; gap: 20px; padding-top: 12px; }
+.how-body p { margin: 0; }
+.how-stat { font-family: var(--mono); font-size: 12px; color: #F0ABFC; letter-spacing: .04em; }
+.how-row { display: grid; gap: 10px; min-width: 0; }
+.how-l { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.swatches { display: flex; flex-wrap: wrap; gap: 12px; }
+.swatches span { display: grid; gap: 6px; justify-items: start; font-size: 12px; color: var(--muted); }
+.swatches b { width: 46px; height: 46px; border-radius: 12px; background: var(--s); border: 1px solid rgba(196,181,253,.25); }
+.swatches em, .specimens em { font-style: normal; }
+.specimens { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.specimens li { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.specimens li span { font-size: 1.2rem; }
+.specimens em { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 15px; }
+.steps li::marker { color: #F0ABFC; font-family: var(--mono); }
+
+/* team motto */
+.team { min-height: 135vh; display: flex; align-items: center; padding-block: 14vh; }
+.team .inner { flex-direction: column; align-items: center; text-align: center; gap: 26px; padding-right: max(56px, calc(env(safe-area-inset-right, 0px) + 52px)); }
+.motto { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(2.1rem, 6vw, 4.6rem); line-height: 1.1; max-width: 19ch; text-wrap: balance; }
+.motto span { display: block; opacity: var(--lo, 1); }
+.motto em { font-style: italic; color: #DDD3FB; }
+:lang(ko) .motto em { font-style: normal; }
+.motto-sub { font-family: var(--ko); font-size: clamp(1rem, 2.1vw, 1.3rem); color: var(--muted); margin: 0; opacity: var(--lo, 1); max-width: 40ch; }
+.crew { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--muted); margin: 0; }
+
+/* contact: name re-forms above */
+.contact { height: 210vh; position: relative; }
+.contact-stage { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; align-items: flex-end; }
+.contact .inner { flex-direction: column; align-items: center; text-align: center; gap: 16px; padding-block: 0 5vh; padding-right: max(56px, calc(env(safe-area-inset-right, 0px) + 52px)); }
+.contact h2 { font-family: var(--serif); font-weight: 300; font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.05; margin: 0; }
+.contact h2 em { font-style: italic; }
+.contact-card { display: grid; justify-items: center; gap: 14px; width: 100%; max-width: 560px; min-width: 0; padding: 24px 30px; border-radius: 22px; background: rgba(22, 12, 38, 0.48); border: 1px solid var(--line); backdrop-filter: blur(8px) saturate(1.2); -webkit-backdrop-filter: blur(8px) saturate(1.2); }
+.contact .inner { opacity: var(--co, 1); transform: translateY(calc((1 - var(--co, 1)) * 24px)); }
+.contact p { margin: 0; color: var(--muted); max-width: 46ch; }
+.links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text);
+  font-size: 14px; font-weight: 500; border-radius: 999px; padding: 10px 18px;
+  border: 1px solid rgba(196,181,253,.35); background: rgba(196,181,253,.1); transition: background .2s, border-color .2s;
+}
+.btn.primary { background: linear-gradient(135deg, rgba(139,92,246,.55), rgba(217,70,239,.4)); border-color: rgba(240,171,252,.5); }
+.btn:hover { background: rgba(196,181,253,.2); }
+.btn svg { width: 16px; height: 16px; fill: currentColor; }
+footer { position: relative; z-index: 2; text-align: center; padding-block: 24px 36px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+.no-webgl #gl { display: none; }
+
+@media (max-width: 760px) {
+  .chapter, .team { min-height: 118vh; }
+  .chapter .inner { justify-content: center !important; padding-right: max(44px, calc(env(safe-area-inset-right, 0px) + 40px)); }
+  .card { background: var(--surface-strong); padding: 28px 22px; }
+  .now .card { padding: 30px 22px; }
+  .docs, .tiles { grid-template-columns: minmax(0, 1fr); }
+  .tile { min-height: 0; }
+  .fog.f1 { width: 420px; height: 420px; }
+  .badge { display: none; }
+  .team .inner, .contact .inner { padding-right: max(44px, calc(env(safe-area-inset-right, 0px) + 40px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fog, .cue i, .st.on path { animation: none; }
+  .st.nova .ring { animation: none; }
+}
+</style>
+
+<div class="glow" aria-hidden="true"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="flash" id="flash" aria-hidden="true"></div>
+<div class="shock" id="shock" aria-hidden="true"></div>
+<canvas id="nameCanvas" aria-hidden="true"></canvas>
+<div class="badge" data-i="badge"></div>
+<div class="topright">
+<nav class="jumps" aria-label="Quick links">
+  <button type="button" data-jump="6" data-i="j_team"></button>
+  <button type="button" data-jump="7" data-i="j_contact"></button>
+</nav>
+<div class="langs" role="group" aria-label="Language">
+  <button type="button" data-lang="en" aria-pressed="true">EN</button>
+  <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
+  <button type="button" data-lang="de" aria-pressed="false">DE</button>
+</div>
+</div>
+<nav class="sky" id="sky" aria-label="Chapters"></nav>
+
+<main>
+  <section class="hero" data-side="center">
+    <div class="stage" id="stage">
+      <div class="fog f3"></div><div class="fog f1"></div><div class="fog f2"></div>
+      <div class="portrait" id="portrait">
+        <div class="arch">
+          <img id="photoImg" alt="Victoria Wachter" hidden>
+          <div class="photo-ph" id="photoPh">
+            <small data-i="photo"></small>
+            <label class="upload"><span data-i="addPhoto"></span><input type="file" id="photoInput" accept="image/*"></label>
+          </div>
+        </div>
+      </div>
+      <h1 class="sr-only">Victoria Wachter</h1>
+      <div class="hero-copy">
+        <p class="role" data-i="role"></p>
+        <p class="line" data-i="tagline"></p>
+      </div>
+      <div class="cue" aria-hidden="true"><span data-i="scroll"></span><i></i></div>
+      <label class="upload change" id="changePhoto" hidden><span data-i="changePhoto"></span><input type="file" id="photoInput2" accept="image/*"></label>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="left">
+    <div class="inner">
+      <article class="card" style="--c:#C4B5FD">
+        <p class="eyebrow" data-i="a_eye"></p>
+        <h2 data-i="a_h"></h2>
+        <p class="meta" data-i="a_meta"></p>
+        <span class="loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span data-i="a_loc"></span><em>42.83° N · 108.73° W</em></span>
+        <div class="docs">
+          <div class="doc"><small data-i="a_p1l"></small><strong data-i="a_p1"></strong><i></i><i></i><i></i><span class="doc-c" data-i="a_c1"></span></div>
+          <div class="doc"><small data-i="a_p2l"></small><strong data-i="a_p2"></strong><i></i><i></i><i></i><span class="doc-c" data-i="a_c2"></span></div>
+        </div>
+        <div class="take"><span data-i="take"></span><p data-i="a_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="right">
+    <div class="inner">
+      <article class="card cert" style="--c:#F0ABFC">
+        <div class="seal" aria-hidden="true">CERT</div>
+        <p class="eyebrow" data-i="m_eye"></p>
+        <h2 data-i="m_h"></h2>
+        <ol class="med-list">
+          <li><strong data-i="md1t"></strong><span class="meta" data-i="md1m"></span><span class="loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span data-i="md1loc"></span><em>47.78° N · 9.28° E</em></span><p data-i="md1p"></p></li>
+          <li><strong data-i="md2t"></strong><span class="meta" data-i="md2m"></span><p data-i="md2p"></p></li>
+        </ol>
+        <div class="take"><span data-i="take"></span><p data-i="m_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="left">
+    <div class="inner">
+      <article class="card langs-card" style="--c:#A5B4FC">
+        <p class="eyebrow" data-i="l_eye"></p>
+        <h2 data-i="l_h"></h2>
+        <ul class="lang-list">
+          <li><span class="name">English</span><span class="lvl" data-i="fluent"></span><span class="bar"><b style="--w:100%"></b></span></li>
+          <li><span class="name">Deutsch</span><span class="lvl" data-i="fluent"></span><span class="bar"><b style="--w:100%"></b></span></li>
+          <li><span class="name ko">한국어</span><span class="lvl" data-i="moderate"></span><span class="bar"><b style="--w:58%"></b></span></li>
+          <li class="minor"><span class="name">Français</span><span class="lvl" data-i="b2"></span><span class="bar"><b style="--w:70%"></b></span></li>
+        </ul>
+        <p data-i="l_p"></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="right">
+    <div class="inner">
+      <article class="card" style="--c:#A5B4FC">
+        <div class="sheet-wrap" aria-hidden="true">
+          <div class="sheet">
+            <span class="h"></span><span class="h">A</span><span class="h">B</span>
+            <span class="h">1</span><span class="v th">Technology</span><span class="v th">g CO₂-eq/kWh</span>
+            <span class="h">2</span><span class="v">Nuclear</span><span class="v hl">5.5</span>
+            <span class="h">3</span><span class="v">Offshore wind</span><span class="v">13–23</span>
+            <span class="h">4</span><span class="v">Solar PV</span><span class="v">23–82</span>
+            <span class="h">5</span><span class="v">Natural gas</span><span class="v">403–513</span>
+          </div>
+          <div class="tabs"><span>Costs</span><span class="on">GHG emissions</span><span>Water &amp; land</span><span>Radioactive releases</span></div>
+        </div>
+        <p class="eyebrow" data-i="r_eye"></p>
+        <h2 data-i="r_h"></h2>
+        <p class="meta" data-i="r_meta"></p>
+        <p data-i="r_p"></p>
+        <div class="take"><span data-i="take"></span><p data-i="r_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter now" data-side="left">
+    <div class="inner">
+      <article class="card" style="--c:#F0ABFC">
+        <p class="eyebrow" data-i="n_eye"></p>
+        <h2 data-i="n_h"></h2>
+        <p data-i="n_p"></p>
+        <div class="tiles">
+          <div class="tile"><div><strong data-i="n_t2"></strong><br><small data-i="n_t2s"></small></div><span class="chip prog" data-i="n_t2c"></span></div>
+          <div class="tile"><div><strong data-i="n_t1"></strong><br><small data-i="n_t1s"></small></div><span class="chip team" data-i="teamChip"></span></div>
+        </div>
+        <details class="howto" id="howto">
+          <summary><span data-i="h_sum"></span><i aria-hidden="true">+</i></summary>
+          <div class="how-body">
+            <p data-i="h_intro"></p>
+            <p class="how-stat" data-i="h_stat"></p>
+            <div class="how-row"><span class="how-l" data-i="h_pal"></span>
+              <div class="swatches">
+                <span style="--s:#0B0612"><b></b><em data-i="sw1"></em></span>
+                <span style="--s:#8B5CF6"><b></b><em data-i="sw2"></em></span>
+                <span style="--s:#C4B5FD"><b></b><em data-i="sw3"></em></span>
+                <span style="--s:#F0ABFC"><b></b><em data-i="sw4"></em></span>
+                <span style="--s:#818CF8"><b></b><em data-i="sw5"></em></span>
+              </div>
+            </div>
+            <div class="how-row"><span class="how-l" data-i="h_type"></span>
+              <ul class="specimens">
+                <li><span style="font-family: var(--serif)">Cormorant Garamond</span><em data-i="r1"></em></li>
+                <li><span style="font-family: 'Albert Sans', sans-serif">Albert Sans</span><em data-i="r2"></em></li>
+                <li><span style="font-family: var(--ko)">Gowun Batang 고운바탕</span><em data-i="r3"></em></li>
+                <li><span style="font-family: var(--mono); font-size: 1rem">JetBrains Mono</span><em data-i="r4"></em></li>
+              </ul>
+            </div>
+            <div class="how-row"><span class="how-l" data-i="h_proc"></span>
+              <ol class="steps"><li data-i="s1"></li><li data-i="s2"></li><li data-i="s3"></li><li data-i="s4"></li></ol>
+            </div>
+          </div>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <section class="team" data-side="center">
+    <div class="inner">
+      <p class="eyebrow" style="--c:#C4B5FD" data-i="t_eye"></p>
+      <h2 class="motto" id="motto"><span data-i="m1"></span><span data-i="m2"></span><span data-i="m3"></span></h2>
+      <p class="motto-sub" id="mottoSub" data-i="msub"></p>
+      <p class="crew"><span data-i="crew"></span> · <a href="https://www.eylabs.co.kr/" target="_blank" rel="noopener">eylabs.co.kr ↗</a></p>
+    </div>
+  </section>
+
+  <section class="contact" data-side="center">
+    <div class="contact-stage">
+      <div class="inner"><div class="contact-card">
+        <p class="eyebrow" data-i="c_eye"></p>
+        <h2 data-i="c_h"></h2>
+        <p data-i="c_p"></p>
+        <div class="links">
+          <a class="btn primary" href="https://www.linkedin.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>LinkedIn <span class="ph" data-i="c_li"></span></a>
+          <span class="btn"><span class="ph" data-i="c_mail"></span></span>
+        </div>
+      </div></div>
+    </div>
+  </section>
+</main>
+<footer>© 2026 Victoria Wachter</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const root = document.documentElement;
+  const secs = [...document.querySelectorAll('main > section')];
+
+  /* ---------- translations ---------- */
+  const ph = s => '<span class="ph">' + s + '</span>';
+  const T = {
+    en: {
+      badge: 'Live preview · fill in the dashed boxes', j_team: 'EY LABS ↓', j_contact: 'Contact ↓', photo: 'Your photo', addPhoto: 'Add a photo to preview', changePhoto: 'Change photo',
+      role: 'Designer · EY LABS', tagline: 'I design how ideas look, feel and move.', scroll: 'Scroll',
+      take: 'What I took from it', takePh: ph('One lesson you still use today.'),
+      a_eye: 'Chapter 01 · Administration', a_h: 'Two policies I wrote',
+      a_meta: 'Administrative internship · Wyoming Catholic College, USA · Feb 2026',
+      a_loc: 'Lander, Wyoming, USA', md1loc: 'Salem, Lake Constance, Germany',
+      a_take: 'How to write a policy: find out what the school needs, study examples that already exist, and tailor them to fit.',
+      a_p1l: 'Policy 01 · 7 pages', a_p1: 'Fire Risk Management Policy', a_p2l: 'Policy 02 · 6 pages', a_p2: 'Document Retention Policy',
+      a_c1: 'Fire prevention, who leads in an emergency, and a step-by-step emergency action plan.',
+      a_c2: 'How long each type of record is kept, how it is stored securely, and how it is destroyed safely.',
+      m_eye: 'Chapter 02 · Medicine', m_h: 'From first aid to future doctors',
+      md1t: 'School Medical Service', md1m: 'Schule Schloss Salem · 2 years',
+      md1p: 'Trained in first aid and worked medical shifts at sports events.',
+      md2t: 'Future Doctors Course', md2m: 'Premed Projects · 1 month · Nov 2026',
+      md2p: 'Completed the course and passed the final knowledge test.',
+      m_take: 'I’m naturally curious about medicine, especially how to save someone in an emergency. I may not become a doctor, but I want to be able to solve problems and help people when the pressure is on.',
+      l_eye: 'Chapter 03 · Languages', l_h: 'Trilingual', fluent: 'Fluent', moderate: 'Moderate', b2: 'B2 certificate',
+      l_p: ph('Where you use each language: at home, at school, with the team.'),
+      r_eye: 'Chapter 04 · Research', r_h: 'Mapping the impact of nuclear power',
+      r_meta: 'Internship · Seoul National University, NFL · 2 weeks · Summer 2026',
+      r_p: 'I built Excel workbooks that gather about 150 data points on nuclear power from sources like the IEA, UNSCEAR and NREL: costs, emissions, water and land use, and radioactive releases, with solar, wind and gas for comparison.',
+      r_take: 'How to pull out the data that really matters, and organize it into a spreadsheet with a clear overview that anyone can use.',
+      n_eye: 'Now · Design', n_h: 'The team’s designer',
+      n_p: 'At EY LABS I shape how our products look and how we present them. I build with AI, too, through vibe coding.',
+      n_t1: 'Lost & found mini-app (Apps in Toss)', n_t1s: 'Visuals and ads · team project', n_t2: 'This portfolio', n_t2s: 'Designed by me, built with vibe coding', n_t2c: 'Design + code', teamChip: 'Up next', progChip: 'In progress',
+      h_sum: 'How I made this site', h_intro: 'One idea guided everything: a single cloud of stars that becomes a new shape for each chapter of my story.',
+      h_stat: '7 chapters · 7 different transitions · 15,000 stars', h_pal: 'Palette', h_type: 'Type', h_proc: 'Process',
+      sw1: 'Plum night', sw2: 'Violet', sw3: 'Lavender', sw4: 'Orchid', sw5: 'Indigo',
+      r1: 'Headlines', r2: 'Text', r3: 'Korean', r4: 'Labels',
+      s1: 'Sketched the story and gave each chapter its own shape.', s2: 'Picked the palette and fonts.',
+      s3: 'Built it with vibe coding: Three.js, custom shaders and 15,000 stars.', s4: 'Directed every transition and cut whatever felt like too much.',
+      t_eye: 'My team · EY LABS 이와이렙스',
+      m1: 'When we find something <em>inconvenient,</em>', m2: 'we step in.', m3: '<em>And we fix it.</em>',
+      msub: '불편함을 발견하면, 먼저 나섭니다. 그리고 해결합니다.', crew: 'Building with Eunyul Kim, Junhyuk Youn & Siyul Kim',
+      c_eye: 'Contact', c_h: 'Let’s work <em>together.</em>', c_p: 'Found something inconvenient? Tell me about it.',
+      c_li: 'profile link', c_mail: 'your email',
+      nav: ['Victoria', 'Administration', 'Medicine', 'Languages', 'Research', 'Now', 'Team', 'Contact']
+    },
+    ko: {
+      badge: '라이브 미리보기 · 점선 상자를 채워 주세요', j_team: 'EY LABS ↓', j_contact: '연락처 ↓', photo: '내 사진', addPhoto: '사진을 넣어 미리보기', changePhoto: '사진 바꾸기',
+      role: '디자이너 · EY LABS', tagline: '아이디어가 보이고, 느껴지고, 움직이는 방식을 디자인합니다.', scroll: '스크롤',
+      take: '배운 점', takePh: ph('지금도 쓰고 있는 배움 한 가지'),
+      a_eye: '챕터 01 · 행정', a_h: '직접 작성한 두 가지 정책',
+      a_meta: '행정 인턴십 · 미국 와이오밍 가톨릭 칼리지 · 2026년 2월',
+      a_loc: '미국 와이오밍주 랜더', md1loc: '독일 보덴호 인근 잘렘',
+      a_take: '정책을 만드는 법: 학교에 무엇이 필요한지 파악하고, 기존 사례를 찾아본 뒤, 학교에 맞게 다듬었습니다.',
+      a_p1l: '정책 01 · 7쪽', a_p1: '화재 위험 관리 정책', a_p2l: '정책 02 · 6쪽', a_p2: '문서 보존 정책',
+      a_c1: '화재 예방, 비상시 지휘 체계, 단계별 비상 대응 계획을 담았습니다.',
+      a_c2: '기록 종류별 보존 기간, 안전한 보관 방법, 안전한 폐기 절차를 정했습니다.',
+      m_eye: '챕터 02 · 의학', m_h: '응급처치부터 Future Doctors까지',
+      md1t: '학교 응급처치 봉사단', md1m: 'Schule Schloss Salem · 2년',
+      md1p: '응급처치를 배우고, 스포츠 행사에서 의료 지원 근무를 섰습니다.',
+      md2t: 'Future Doctors 과정', md2m: 'Premed Projects · 1개월 · 2026년 11월',
+      md2p: '과정을 수료하고 최종 지식 테스트를 통과했습니다.',
+      m_take: '의학, 특히 위급한 상황에서 사람을 살리는 방법에 자연스럽게 관심이 갑니다. 꼭 의사가 되고 싶은 건 아니지만, 긴박한 순간에도 문제를 해결하고 사람을 도울 수 있는 능력을 갖고 싶습니다.',
+      l_eye: '챕터 03 · 언어', l_h: '3개 국어', fluent: '유창함', moderate: '중급', b2: 'B2 자격증',
+      l_p: ph('각 언어를 어디서 쓰는지: 집, 학교, 팀.'),
+      r_eye: '챕터 04 · 연구', r_h: '원자력의 실제 영향을 정리하다',
+      r_meta: '인턴십 · 서울대학교 NFL · 2주 · 2026년 여름',
+      r_p: 'IEA, UNSCEAR, NREL 등의 자료에서 원자력에 관한 약 150개의 데이터를 모아 엑셀 문서로 정리했습니다. 비용, 온실가스 배출, 물·토지 사용, 방사성 물질 배출을 다루고, 태양광·풍력·가스와 비교했습니다.',
+      r_take: '정말 중요한 데이터를 골라내고, 누구나 쉽게 쓸 수 있도록 한눈에 보이는 스프레드시트로 정리하는 법을 배웠습니다.',
+      n_eye: '지금 · 디자인', n_h: '팀의 디자이너',
+      n_p: 'EY LABS에서 제품이 어떻게 보이고 어떻게 소개될지를 디자인합니다. 바이브 코딩으로 AI와 함께 직접 만들기도 합니다.',
+      n_t1: '분실물 매칭 미니앱 (앱인토스)', n_t1s: '비주얼과 광고 · 팀 프로젝트', n_t2: '이 포트폴리오 사이트', n_t2s: '직접 디자인하고 바이브 코딩으로 제작', n_t2c: '디자인 + 코드', teamChip: '예정', progChip: '진행 중',
+      h_sum: '이 사이트를 만든 방법', h_intro: '하나의 아이디어에서 시작했습니다. 하나의 별 구름이 제 이야기의 각 장마다 새로운 모양이 됩니다.',
+      h_stat: '7개 챕터 · 7가지 전환 · 별 15,000개', h_pal: '색상', h_type: '글꼴', h_proc: '과정',
+      sw1: '플럼 나이트', sw2: '바이올렛', sw3: '라벤더', sw4: '오키드', sw5: '인디고',
+      r1: '제목', r2: '본문', r3: '한글', r4: '라벨',
+      s1: '이야기를 스케치하고 장마다 하나의 모양을 정했습니다.', s2: '색상과 글꼴을 골랐습니다.',
+      s3: '바이브 코딩으로 제작했습니다. Three.js, 커스텀 셰이더, 별 15,000개.', s4: '모든 전환을 직접 연출하고, 과한 것은 덜어냈습니다.',
+      t_eye: '우리 팀 · EY LABS 이와이렙스',
+      m1: '불편함을 <em>발견하면,</em>', m2: '먼저 나섭니다.', m3: '<em>그리고 해결합니다.</em>',
+      msub: 'When we find something inconvenient, we step in. And we fix it.', crew: '김은율, 윤준혁, 김시율과 함께 만듭니다',
+      c_eye: '연락처', c_h: '함께 <em>만들어요.</em>', c_p: '불편한 점을 발견했나요? 알려 주세요.',
+      c_li: '프로필 링크', c_mail: '이메일 주소',
+      nav: ['Victoria', '행정', '의학', '언어', '연구', '지금', '팀', '연락처']
+    },
+    de: {
+      badge: 'Live-Vorschau · gestrichelte Felder ausfüllen', j_team: 'EY LABS ↓', j_contact: 'Kontakt ↓', photo: 'Dein Foto', addPhoto: 'Foto zur Vorschau hinzufügen', changePhoto: 'Foto ändern',
+      role: 'Designerin · EY LABS', tagline: 'Ich gestalte, wie Ideen aussehen, sich anfühlen und bewegen.', scroll: 'Scrollen',
+      take: 'Was ich mitgenommen habe', takePh: ph('Eine Lektion, die du heute noch nutzt.'),
+      a_eye: 'Kapitel 01 · Verwaltung', a_h: 'Zwei Richtlinien, die ich geschrieben habe',
+      a_meta: 'Verwaltungspraktikum · Wyoming Catholic College, USA · Feb. 2026',
+      a_loc: 'Lander, Wyoming, USA', md1loc: 'Salem am Bodensee, Deutschland',
+      a_take: 'Wie man eine Richtlinie schreibt: herausfinden, was die Schule braucht, bestehende Beispiele studieren und sie passend für die Schule anpassen.',
+      a_p1l: 'Richtlinie 01 · 7 Seiten', a_p1: 'Richtlinie zum Brandrisikomanagement', a_p2l: 'Richtlinie 02 · 6 Seiten', a_p2: 'Richtlinie zur Aufbewahrung von Dokumenten',
+      a_c1: 'Brandschutz, Zuständigkeiten im Notfall und ein Notfallplan Schritt für Schritt.',
+      a_c2: 'Wie lange welche Unterlagen aufbewahrt werden, wie man sie sicher lagert und sicher vernichtet.',
+      m_eye: 'Kapitel 02 · Medizin', m_h: 'Von Erster Hilfe zum Future Doctors Course',
+      md1t: 'Schulsanitätsdienst', md1m: 'Schule Schloss Salem · 2 Jahre',
+      md1p: 'In Erster Hilfe ausgebildet, mit Sanitätsdiensten bei Sportveranstaltungen.',
+      md2t: 'Future Doctors Course', md2m: 'Premed Projects · 1 Monat · Nov. 2026',
+      md2p: 'Kurs abgeschlossen und den Abschlusstest bestanden.',
+      m_take: 'Medizin interessiert mich von Natur aus, vor allem, wie man jemanden im Notfall rettet. Ich will nicht unbedingt Ärztin werden, aber ich möchte auch unter Druck Probleme lösen und Menschen helfen können.',
+      l_eye: 'Kapitel 03 · Sprachen', l_h: 'Dreisprachig', fluent: 'Fließend', moderate: 'Mittelstufe', b2: 'B2-Zertifikat',
+      l_p: ph('Wo du welche Sprache nutzt: zu Hause, in der Schule, im Team.'),
+      r_eye: 'Kapitel 04 · Forschung', r_h: 'Die Auswirkungen der Kernenergie erfassen',
+      r_meta: 'Praktikum · Seoul National University, NFL · 2 Wochen · Sommer 2026',
+      r_p: 'Ich habe Excel-Arbeitsmappen gebaut, die rund 150 Datenpunkte zur Kernenergie aus Quellen wie IEA, UNSCEAR und NREL zusammentragen: Kosten, Emissionen, Wasser- und Landnutzung sowie radioaktive Freisetzungen, mit Solar, Wind und Gas zum Vergleich.',
+      r_take: 'Wie man die wirklich wichtigen Daten herausfiltert und sie in einer übersichtlichen Tabelle ordnet, mit der alle gut arbeiten können.',
+      n_eye: 'Jetzt · Design', n_h: 'Die Designerin im Team',
+      n_p: 'Bei EY LABS gestalte ich, wie unsere Produkte aussehen und wie wir sie präsentieren. Mit Vibe Coding baue ich auch selbst mit KI.',
+      n_t1: 'Fundsachen-Mini-App (Apps in Toss)', n_t1s: 'Visuals und Werbung · Teamprojekt', n_t2: 'Diese Portfolio-Website', n_t2s: 'Selbst gestaltet, per Vibe Coding gebaut', n_t2c: 'Design + Code', teamChip: 'Demnächst', progChip: 'In Arbeit',
+      h_sum: 'Wie ich diese Seite gemacht habe', h_intro: 'Eine Idee hat alles geleitet: eine einzige Sternenwolke, die für jedes Kapitel meiner Geschichte zu einer neuen Form wird.',
+      h_stat: '7 Kapitel · 7 verschiedene Übergänge · 15.000 Sterne', h_pal: 'Farben', h_type: 'Schriften', h_proc: 'Ablauf',
+      sw1: 'Pflaumennacht', sw2: 'Violett', sw3: 'Lavendel', sw4: 'Orchidee', sw5: 'Indigo',
+      r1: 'Überschriften', r2: 'Fließtext', r3: 'Koreanisch', r4: 'Labels',
+      s1: 'Die Geschichte skizziert und jedem Kapitel eine eigene Form gegeben.', s2: 'Farben und Schriften ausgesucht.',
+      s3: 'Per Vibe Coding gebaut: Three.js, eigene Shader und 15.000 Sterne.', s4: 'Jeden Übergang selbst inszeniert und weggelassen, was zu viel war.',
+      t_eye: 'Mein Team · EY LABS 이와이렙스',
+      m1: 'Wenn wir auf etwas <em>Umständliches</em> stoßen,', m2: 'greifen wir ein.', m3: '<em>Und lösen es.</em>',
+      msub: '불편함을 발견하면, 먼저 나섭니다. 그리고 해결합니다.', crew: 'Gemeinsam mit Eunyul Kim, Junhyuk Youn und Siyul Kim',
+      c_eye: 'Kontakt', c_h: 'Lass uns <em>zusammenarbeiten.</em>', c_p: 'Etwas Umständliches entdeckt? Erzähl mir davon.',
+      c_li: 'Profil-Link', c_mail: 'deine E-Mail',
+      nav: ['Victoria', 'Verwaltung', 'Medizin', 'Sprachen', 'Forschung', 'Jetzt', 'Team', 'Kontakt']
+    }
+  };
+  let lang = 'en';
+  try { const s = localStorage.getItem('vw-lang'); if (s && T[s]) lang = s; } catch (e) {}
+  const applyLang = l => {
+    lang = l; root.lang = l;
+    document.querySelectorAll('[data-i]').forEach(el => { const v = T[l][el.dataset.i]; if (v != null) el.innerHTML = v; });
+    document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+    starBtns.forEach((b, i) => { b.setAttribute('aria-label', T[l].nav[i]); b.firstChild.textContent = T[l].nav[i]; });
+    try { localStorage.setItem('vw-lang', l); } catch (e) {}
+    requestAnimationFrame(measure);
+  };
+  document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+  /* ---------- photo ---------- */
+  const onPhoto = e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => { const img = $('#photoImg'); img.src = rd.result; img.hidden = false; $('#photoPh').hidden = true; $('#changePhoto').hidden = false; };
+    rd.readAsDataURL(f);
+  };
+  $('#photoInput').addEventListener('change', onPhoto);
+  $('#photoInput2').addEventListener('change', onPhoto);
+
+  /* ---------- star constellation ---------- */
+  const SX = [24, 12, 29, 15, 31, 9, 25, 17], GAP = 40;
+  const SY = SX.map((_, i) => 12 + i * GAP);
+  const H = SY[SY.length - 1] + 12;
+  const sky = $('#sky');
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 40 ' + H); svg.setAttribute('width', '40'); svg.setAttribute('height', H); svg.setAttribute('aria-hidden', 'true');
+  const d = SX.map((x, i) => (i ? 'L' : 'M') + x + ' ' + SY[i]).join(' ');
+  const ghost = document.createElementNS(ns, 'path'); ghost.setAttribute('d', d); ghost.setAttribute('class', 'ghost'); svg.appendChild(ghost);
+  const trail = document.createElementNS(ns, 'path'); trail.setAttribute('d', d); trail.setAttribute('class', 'trail'); svg.appendChild(trail);
+  const STAR = 'M0,-7 L1.5,-1.5 L7,0 L1.5,1.5 L0,7 L-1.5,1.5 L-7,0 L-1.5,-1.5Z';
+  const stars = SX.map((x, i) => {
+    const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'st'); g.setAttribute('transform', 'translate(' + x + ' ' + SY[i] + ')');
+    const ring = document.createElementNS(ns, 'circle'); ring.setAttribute('r', '4'); ring.setAttribute('class', 'ring');
+    const p = document.createElementNS(ns, 'path'); p.setAttribute('d', STAR);
+    g.appendChild(ring); g.appendChild(p); svg.appendChild(g); return g;
+  });
+  sky.appendChild(svg);
+  sky.style.height = H + 'px';
+  let trailLen = 1;
+  const starBtns = SX.map((x, i) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.style.left = x + 'px'; b.style.top = SY[i] + 'px';
+    const sp = document.createElement('span'); b.appendChild(sp);
+    b.addEventListener('click', () => {
+      const vh = innerHeight;
+      const top = i === 0 ? 0 : tops[i] + hs[i] * 0.4 - vh * 0.55;
+      scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    sky.appendChild(b); return b;
+  });
+
+  let tops = [], hs = [];
+  const measure = () => { tops = secs.map(s => s.getBoundingClientRect().top + scrollY); hs = secs.map(s => s.offsetHeight); };
+
+  /* ---------- shapes ---------- */
+  const MOBILE_AT_LOAD = innerWidth < 760;
+  const N = MOBILE_AT_LOAD ? 7000 : 15000;
+  const rnd = Math.random;
+  const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185 * v); };
+  const make = fn => { const a = new Float32Array(N * 3); for (let i = 0; i < N; i++) { const p = fn(i); a[i*3] = p[0]; a[i*3+1] = p[1]; a[i*3+2] = p[2]; } return a; };
+
+  const nebula = () => make(i => {
+    if (rnd() < 0.2) { const r = 1.3 + Math.pow(rnd(), 0.8) * 4.3, th = rnd() * 6.2832; return [Math.cos(th) * r, gauss() * 0.35, Math.sin(th) * r]; }
+    const arm = i % 3, r = 1.2 + Math.pow(rnd(), 0.75) * 3.1, a = arm * 2.0944 + r * 1.25 + gauss() * 0.2;
+    return [Math.cos(a) * r + gauss() * 0.1, gauss() * 0.09 * (2.6 / r + 0.4), Math.sin(a) * r + gauss() * 0.1];
+  });
+
+  const docs = () => make(i => {
+    const which = i % 2, r = rnd(); let x, y;
+    if (r < 0.24) { const t = rnd() * 4; if (t < 1) { x = (t - 0.5) * 1.6; y = 1.1; } else if (t < 2) { x = 0.8; y = (t - 1.5) * 2.2; } else if (t < 3) { x = (t - 2.5) * 1.6; y = -1.1; } else { x = -0.8; y = (t - 3.5) * 2.2; } }
+    else if (r < 0.34) { x = -0.6 + rnd() * 0.85; y = 0.82 + rnd() * 0.1; }
+    else if (r < 0.9) { const k = Math.floor(rnd() * 9), end = 0.15 + ((k * 37 + which * 11) % 10) / 22; x = -0.6 + rnd() * (end + 0.6); y = 0.52 - k * 0.17 + gauss() * 0.008; }
+    else { const a = rnd() * 6.2832; x = 0.52 + Math.cos(a) * 0.12; y = 0.86 + Math.sin(a) * 0.12; }
+    const z = gauss() * 0.012, rot = which ? 0.16 : -0.12, cx = which ? 0.8 : -0.8, cz = which ? -0.4 : 0.4, cy = which ? -0.15 : 0.15;
+    const c = Math.cos(rot), s = Math.sin(rot);
+    return [(x * c - y * s) * 1.15 + cx, (x * s + y * c) * 1.15 + cy, z + cz];
+  });
+
+  const helix = () => make(() => {
+    const y = (rnd() - 0.5) * 5.0, r = rnd(); let p;
+    if (r < 0.7) { const a = y * 1.5 + (rnd() < 0.5 ? 0 : Math.PI); p = [Math.cos(a) * 0.9 + gauss() * 0.04, y + gauss() * 0.04, Math.sin(a) * 0.9 + gauss() * 0.04]; }
+    else { const yy = Math.round(y / 0.3) * 0.3, a = yy * 1.5, t = rnd() * 2 - 1; p = [Math.cos(a) * 0.9 * t, yy + gauss() * 0.015, Math.sin(a) * 0.9 * t]; }
+    const c = Math.cos(0.38), s = Math.sin(0.38); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]];
+  });
+
+  const textShape = (lines, font, width, opt = {}) => {
+    const scatter = opt.scatter ?? 0.08, depth = opt.depth ?? 0.3;
+    const W = 1400, Hh = 300 * lines.length, cv = document.createElement('canvas'); cv.width = W; cv.height = Hh;
+    const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = font;
+    if (opt.stroke) { x.strokeStyle = '#fff'; x.lineWidth = opt.stroke; x.lineJoin = 'round'; }
+    lines.forEach((l, k) => { const ly = 150 + k * 260; x.fillText(l, W / 2, ly); if (opt.stroke) x.strokeText(l, W / 2, ly); });
+    const dt = x.getImageData(0, 0, W, Hh).data, pts = []; let minX = W, maxX = 0, minY = Hh, maxY = 0;
+    for (let yy = 0; yy < Hh; yy += 2) for (let xx = 0; xx < W; xx += 2) if (dt[(yy * W + xx) * 4 + 3] > 128) { pts.push([xx, yy]); if (xx < minX) minX = xx; if (xx > maxX) maxX = xx; if (yy < minY) minY = yy; if (yy > maxY) maxY = yy; }
+    const cxp = (minX + maxX) / 2, cyp = (minY + maxY) / 2, sc = width / Math.max(1, maxX - minX);
+    return make(() => {
+      if (rnd() < scatter || !pts.length) return [gauss() * width * 0.45, gauss() * 1.0, gauss() * 0.7];
+      const p = pts[Math.floor(rnd() * pts.length)];
+      return [(p[0] - cxp + rnd() * 2) * sc, -(p[1] - cyp + rnd() * 2) * sc, (rnd() - 0.5) * depth];
+    });
+  };
+
+  const sheet = () => {
+    const C = 10, R = 7, cs = 0.42, data = [0.5, 0.9, 0.75, 1.3, 1.1, 1.7, 1.45, 2.0, 1.8, 2.3];
+    return make(() => {
+      const r = rnd(); let x, y, z;
+      if (r < 0.5) {
+        if (rnd() < 0.55) { const k = Math.floor(rnd() * (C + 1)); x = (k - C / 2) * cs; z = (rnd() - 0.5) * R * cs; }
+        else { const k = Math.floor(rnd() * (R + 1)); z = (k - R / 2) * cs; x = (rnd() - 0.5) * C * cs; }
+        y = 0;
+      } else {
+        const c = Math.floor(rnd() * C), row = c % 2 ? 2 : 4, h = data[c], hw = cs * 0.34;
+        const bx = (c - C / 2 + 0.5) * cs, bz = (row - R / 2 + 0.5) * cs;
+        if (rnd() < 0.65) {
+          const e = Math.floor(rnd() * 12), t = rnd();
+          const sx = e % 2 ? 1 : -1, sz = (e >> 1) % 2 ? 1 : -1;
+          if (e < 4) { x = bx + sx * hw; z = bz + sz * hw; y = t * h; }
+          else if (e < 8) { x = bx + (t * 2 - 1) * hw; z = bz + sz * hw; y = sx > 0 ? h : 0; }
+          else { x = bx + sx * hw; z = bz + (t * 2 - 1) * hw; y = sz > 0 ? h : 0; }
+        } else { x = bx + (rnd() * 2 - 1) * hw; z = bz + (rnd() * 2 - 1) * hw; y = h; }
+      }
+      return [x, y - 1.0, z];
+    });
+  };
+
+  const pen = () => {
+    const A0 = [-2.4, -1.0], A1 = [0, 0.25], A2 = [2.4, -0.15], C0 = [-1.7, 1.15], H1 = [1.15, 0], C3 = [1.75, -1.75];
+    const cub = (p0, p1, p2, p3, t) => { const u = 1 - t; return [u*u*u*p0[0] + 3*u*u*t*p1[0] + 3*u*t*t*p2[0] + t*t*t*p3[0], u*u*u*p0[1] + 3*u*u*t*p1[1] + 3*u*t*t*p2[1] + t*t*t*p3[1]]; };
+    const lin = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const hIn = [A1[0] - H1[0], A1[1] - H1[1]], hOut = [A1[0] + H1[0], A1[1] + H1[1]];
+    return make(() => {
+      const r = rnd(); let p;
+      if (r < 0.55) { const t = rnd(); p = rnd() < 0.5 ? cub(A0, C0, hIn, A1, t) : cub(A1, hOut, C3, A2, t); p = [p[0] + gauss() * 0.018, p[1] + gauss() * 0.018]; }
+      else if (r < 0.7) { const k = Math.floor(rnd() * 3), t = rnd(); p = k === 0 ? lin(A0, C0, t) : k === 1 ? lin(hIn, hOut, t) : lin(A2, C3, t); }
+      else if (r < 0.86) { const A = [A0, A1, A2][Math.floor(rnd() * 3)], s = 0.11, t = rnd() * 4, e = Math.floor(t), f = t - e; const pts = [[-s, -s], [s, -s], [s, s], [-s, s], [-s, -s]]; const q = lin(pts[e], pts[e + 1], f); p = [A[0] + q[0], A[1] + q[1]]; }
+      else if (r < 0.95) { const E = [C0, hIn, hOut, C3][Math.floor(rnd() * 4)], a = rnd() * 6.2832; p = [E[0] + Math.cos(a) * 0.065, E[1] + Math.sin(a) * 0.065]; }
+      else { p = [gauss() * 2.4, gauss() * 1.4]; }
+      return [p[0], p[1], Math.sin(p[0] * 1.2) * 0.35 + gauss() * 0.03];
+    });
+  };
+
+  const knot = () => {
+    const tk = t => { const r = Math.cos(3 * t) + 2.3; return [r * Math.cos(2 * t) * 0.68, r * Math.sin(2 * t) * 0.68, -Math.sin(3 * t) * 0.68]; };
+    const nrm = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+    return make(i => {
+      const t = rnd() * 6.2832, j = (i % 5) - 2, p = tk(t), q = tk(t + 0.002);
+      const Tn = nrm([q[0] - p[0], q[1] - p[1], q[2] - p[2]]), R = nrm(p);
+      const B = nrm([Tn[1] * R[2] - Tn[2] * R[1], Tn[2] * R[0] - Tn[0] * R[2], Tn[0] * R[1] - Tn[1] * R[0]]), o = j * 0.085;
+      return [p[0] + B[0] * o + gauss() * 0.01, p[1] + B[1] * o + gauss() * 0.01, p[2] + B[2] * o + gauss() * 0.01];
+    });
+  };
+
+  const planet = (n = N) => {
+    const R = 1.45, broken = new Float32Array(n * 3), fixed = new Float32Array(n * 3);
+    const hsh = k => { const v = Math.sin(k * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+    const nrm = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+    const rotAx = (p, ax, ang) => {
+      const c = Math.cos(ang), s = Math.sin(ang), dd = p[0] * ax[0] + p[1] * ax[1] + p[2] * ax[2];
+      return [p[0] * c + (ax[1] * p[2] - ax[2] * p[1]) * s + ax[0] * dd * (1 - c), p[1] * c + (ax[2] * p[0] - ax[0] * p[2]) * s + ax[1] * dd * (1 - c), p[2] * c + (ax[0] * p[1] - ax[1] * p[0]) * s + ax[2] * dd * (1 - c)];
+    };
+    const tiltRing = p => { const c = Math.cos(0.32), s = Math.sin(0.32); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]]; };
+    for (let i = 0; i < n; i++) {
+      const r = rnd(); let f, b;
+      if (r < 0.72) {
+        let y = rnd() * 2 - 1; if (rnd() < 0.3) y = clamp(Math.round(y * 9) / 9 + gauss() * 0.01, -1, 1);
+        const th = rnd() * 6.2832, rr = Math.sqrt(1 - y * y);
+        f = [Math.cos(th) * rr * R, y * R, Math.sin(th) * rr * R];
+        const sec = Math.floor(th / 6.2832 * 7 * 0.99999), band = Math.floor((y + 1) / 2 * 4 * 0.99999), cell = sec + 7 * band;
+        const thc = (sec + 0.5) / 7 * 6.2832, yc = ((band + 0.5) / 4) * 2 - 1, rc = Math.sqrt(1 - yc * yc);
+        const cen = [Math.cos(thc) * rc * R, yc * R, Math.sin(thc) * rc * R], cn = nrm(cen);
+        const h1 = hsh(cell), h2 = hsh(cell + 50), h3 = hsh(cell + 99);
+        const off = h1 < 0.3 ? 0.06 + h1 * 0.3 : 0.35 + h2 * 0.95;
+        const loc = rotAx([f[0] - cen[0], f[1] - cen[1], f[2] - cen[2]], nrm([h2 - 0.5, h3 - 0.5, h1 - 0.5]), (h3 - 0.5) * 1.1);
+        b = [cen[0] + cn[0] * off + loc[0], cen[1] + cn[1] * off + loc[1] + (h2 - 0.5) * 0.3, cen[2] + cn[2] * off + loc[2]];
+      } else if (r < 0.95) {
+        const th = rnd() * 6.2832, band = rnd() < 0.62 ? 2.0 + rnd() * 0.24 : 2.33 + rnd() * 0.3, y = gauss() * 0.015;
+        f = tiltRing([Math.cos(th) * band, y, Math.sin(th) * band]);
+        const arc = Math.floor(th / 6.2832 * 6 * 0.99999) + 40, h1 = hsh(arc), h2 = hsh(arc + 7), h3 = hsh(arc + 13);
+        const th2 = th + (h3 - 0.5) * 0.35, band2 = band + (h1 - 0.3) * 0.7;
+        b = tiltRing([Math.cos(th2) * band2, y + (h2 - 0.5) * 0.8, Math.sin(th2) * band2]);
+      } else {
+        const th = rnd() * 6.2832, ph = Math.acos(2 * rnd() - 1), rad = 3 + rnd() * 2;
+        f = [Math.sin(ph) * Math.cos(th) * rad, Math.cos(ph) * rad * 0.6, Math.sin(ph) * Math.sin(th) * rad];
+        b = [f[0] * 1.3, f[1] * 1.3, f[2] * 1.3];
+      }
+      broken[i * 3] = b[0]; broken[i * 3 + 1] = b[1]; broken[i * 3 + 2] = b[2];
+      fixed[i * 3] = f[0]; fixed[i * 3 + 1] = f[1]; fixed[i * 3 + 2] = f[2];
+    }
+    return [broken, fixed];
+  };
+
+  const hex = h => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
+  // shape indices: 0 nebula, 1 docs, 2 helix, 3 (words base marker), 4 sheet, 5 pen, 6 knot, 7 name, 8/9/10 Hello/Hallo/안녕
+  const SHAPE_COL = ['#8B5CF6', '#C4B5FD', '#E879F9', '#A5B4FC', '#818CF8', '#F0ABFC', '#A78BFA', '#E9DFFF', '#A5B4FC', '#C4B5FD', '#D8B4FE'].map(hex);
+  const SEC_BG = ['#0B0612', '#0D0817', '#130616', '#0A0A1B', '#060A17', '#14061C', '#0B0714', '#08050F'].map(hex);
+  const SEC_SIDE = secs.map(s => s.dataset.side === 'left' ? 1 : s.dataset.side === 'right' ? -1 : 0);
+  const SEC_MODE = [0, 1, 2, 3, 4, 7, 6, 5];
+  const WORD0 = 8;
+
+  /* ---------- name → dust (top) ---------- */
+  const nc = $('#nameCanvas'), nx = nc.getContext('2d');
+  let nOff = null, parts = [], nMin = 0, nMax = 1, nDpr = 1, lastP = -1;
+  const layoutName = () => {
+    nDpr = Math.min(devicePixelRatio || 1, 2);
+    const W = innerWidth, Hh = innerHeight, mobile = W < 760;
+    nc.width = Math.round(W * nDpr); nc.height = Math.round(Hh * nDpr);
+    const size = mobile ? Math.min(W * 0.19, 92) : Math.min(W * 0.105, 168);
+    const lines = mobile ? ['Victoria', 'Wachter'] : ['Victoria Wachter'];
+    const cy = Hh * (mobile ? 0.66 : 0.68);
+    nOff = document.createElement('canvas'); nOff.width = nc.width; nOff.height = nc.height;
+    const o = nOff.getContext('2d'); o.scale(nDpr, nDpr);
+    o.fillStyle = '#ffffff'; o.textAlign = 'center'; o.textBaseline = 'middle';
+    o.font = '300 ' + size + 'px "Cormorant Garamond", Georgia, serif';
+    o.shadowColor = 'rgba(196,181,253,0.55)'; o.shadowBlur = 26;
+    lines.forEach((l, k) => o.fillText(l, W / 2, cy + (k - (lines.length - 1) / 2) * size * 0.95));
+    const dt = o.getImageData(0, 0, nOff.width, nOff.height).data, step = Math.max(2, Math.round((mobile ? 2 : 2.4) * nDpr));
+    parts = []; nMin = Infinity; nMax = -Infinity;
+    for (let y = 0; y < nOff.height; y += step) for (let x = 0; x < nOff.width; x += step)
+      if (dt[(y * nOff.width + x) * 4 + 3] > 150) { parts.push({ x, y }); if (x < nMin) nMin = x; if (x > nMax) nMax = x; }
+    const span = Math.max(1, nMax - nMin);
+    parts.forEach(p => { p.start = ((p.x - nMin) / span) * 0.55 + rnd() * 0.1; p.vx = (40 + rnd() * 220) * nDpr; p.vy = -(40 + rnd() * 200) * nDpr; p.w = rnd() * 6.28; p.s = (1 + rnd() * 0.9) * nDpr; });
+    lastP = -1;
+  };
+  const drawName = (p, t) => {
+    if (!nOff) return;
+    if (p === lastP && (p <= 0 || p >= 1)) return;
+    lastP = p;
+    nx.setTransform(1, 0, 0, 1, 0, 0); nx.clearRect(0, 0, nc.width, nc.height);
+    if (p >= 0.999) return;
+    if (reduce) { nx.globalAlpha = clamp(1 - p * 1.6); nx.drawImage(nOff, 0, 0); nx.globalAlpha = 1; return; }
+    const eraseX = nMin + (nMax - nMin) * (p * 1.25 / 0.55);
+    nx.drawImage(nOff, 0, 0);
+    if (p > 0) {
+      nx.globalCompositeOperation = 'destination-out';
+      const g = nx.createLinearGradient(eraseX - 40 * nDpr, 0, eraseX + 24 * nDpr, 0);
+      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      nx.fillStyle = g; nx.fillRect(0, 0, nc.width, nc.height);
+      nx.globalCompositeOperation = 'source-over'; nx.fillStyle = '#F4EEFF';
+      const lim = eraseX + 24 * nDpr;
+      for (let i = 0; i < parts.length; i++) {
+        const q = parts[i]; if (q.x > lim) continue;
+        const l = clamp((p * 1.25 - q.start) / 0.45); if (l >= 1) continue;
+        const e = l * l;
+        nx.globalAlpha = Math.pow(1 - l, 1.3);
+        const s = q.s * (1 - l * 0.35);
+        nx.fillRect(q.x + q.vx * e + Math.sin(t * 1.6 + q.w) * 7 * nDpr * l, q.y + q.vy * e + Math.cos(t * 1.3 + q.w) * 5 * nDpr * l, s, s);
+      }
+      nx.globalAlpha = 1;
+    }
+  };
+
+  /* ---------- WebGL ---------- */
+  const VERT = `
+    attribute vec3 posA; attribute vec3 posB; attribute float aRand;
+    uniform float uProg, uTime, uSize, uPR, uSwirl, uMode, uDelay, uCalm;
+    uniform vec2 uTA, uTB;
+    varying float vMix; varying float vA; varying float vBoost;
+    vec3 rY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }
+    vec3 rX(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(p.x, c*p.y-s*p.z, s*p.y+c*p.z); }
+    vec3 h3(float r){ return vec3(sin(r*91.3+0.7), cos(r*57.7+1.9), sin(r*33.1+4.1)); }
+    void main(){
+      vec3 a = rX(rY(posA, uTA.x), uTA.y);
+      vec3 b = rX(rY(posB, uTB.x), uTB.y);
+      int m = int(uMode + 0.5);
+      bool sweep = (m == 4 || m == 7);
+      float cellH = fract(sin(dot(floor(posB * 1.3), vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+      float d = sweep ? clamp((b.x + 3.0) / 6.0, 0.0, 1.0) * 0.45 + aRand * 0.05 : (m == 8 ? cellH * 0.55 : aRand * uDelay);
+      float span = sweep ? 0.5 : (m == 8 ? 0.45 : 1.0 - uDelay);
+      float pp = clamp((uProg - d) / span, 0.0, 1.0);
+      float e = pp * pp * (3.0 - 2.0 * pp);
+      float k = sin(pp * 3.14159);
+      vec3 p = mix(a, b, e); float boost = 1.0;
+      if (m == 1) { p *= 1.0 - 0.8 * k; p = rY(p, k * 5.0 * (0.4 + aRand)); boost = 1.0 + 0.5 * k; }
+      else if (m == 2) { p.y -= k * (3.5 + aRand * 3.0); p.x += k * (aRand - 0.5) * 1.6; }
+      else if (m == 3) { vec3 dir = normalize(mix(a, b, 0.5) + h3(aRand) * 0.9 + vec3(0.001)); p += dir * k * 4.0; }
+      else if (m == 4) { float q = floor(pp * 5.0) / 5.0; p = mix(a, b, mix(q, e, 0.2)); vec3 g = floor(p * 3.0 + 0.5) / 3.0; p = mix(p, g, k * 0.85); boost = 1.0 + 0.6 * k; }
+      else if (m == 5) {
+        vec3 dir = normalize(b + h3(aRand) * 0.7 + vec3(0.001));
+        vec3 core = h3(aRand * 3.1) * 0.06;
+        vec3 blast = dir * (5.5 + aRand * 5.0);
+        if (pp < 0.25) { float t = pp / 0.25; t = t * t; p = mix(a, core, t); boost = 1.0 + 2.2 * t; }
+        else if (pp < 0.55) { float t = (pp - 0.25) / 0.3; t = 1.0 - pow(1.0 - t, 3.0); p = mix(core, blast, t); boost = 3.2 - 2.0 * t; }
+        else { float t = (pp - 0.55) / 0.45; t = t * t * (3.0 - 2.0 * t); p = mix(blast, b, t); boost = 1.2 - 0.2 * t; }
+      }
+      else if (m == 6) { p = rY(p, k * p.y * 2.4); p += h3(aRand) * k * 0.25; }
+      else if (m == 8) { boost = 1.0 + 1.4 * k; }
+      else if (m == 7) { p += vec3(3.0 + aRand * 3.0, 1.6 + aRand * 2.4, (aRand - 0.5) * 2.0) * k; }
+      else { p = rY(p, k * 2.4 * (aRand - 0.5)); p += vec3(sin(aRand*41.0+uTime*0.7+p.y*1.7), cos(aRand*29.0+uTime*0.6+p.x*1.3), sin(aRand*17.0+uTime*0.5+p.z*1.5)) * k * 0.8; }
+      if (uSwirl < 0.5) { p = mix(a, b, e); boost = 1.0; }
+      p += vec3(sin(uTime*0.9+aRand*61.0), cos(uTime*0.8+aRand*47.0), sin(uTime*0.7+aRand*73.0)) * 0.025 * uSwirl * (1.0 - 0.9 * uCalm);
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      gl_Position = projectionMatrix * mv;
+      gl_PointSize = uSize * uPR * (0.55 + aRand * 0.9) * (1.0 - 0.22 * uCalm) / -mv.z;
+      vMix = pp; vBoost = boost;
+      vA = (0.35 + 0.55 * aRand) * (0.8 + 0.2 * sin(uTime * 2.3 + aRand * 90.0));
+    }`;
+  const FRAG = `
+    uniform vec3 uColA, uColB; uniform float uDim;
+    varying float vMix; varying float vA; varying float vBoost;
+    void main(){
+      float d = length(gl_PointCoord - 0.5);
+      if (d > 0.5) discard;
+      float a = pow(1.0 - d * 2.0, 1.8);
+      vec3 col = mix(uColA, uColB, vMix);
+      col = mix(col, vec3(1.0), clamp(a * 0.35 * vA + (vBoost - 1.0) * 0.3, 0.0, 0.85));
+      gl_FragColor = vec4(col, a * vA * uDim * min(vBoost, 2.6));
+    }`;
+
+  let renderer, scene, camera, group, geo, mat, SH = [], XF = [], pGeo, pMat, pGroup, pFix = 0;
+  const initGL = () => {
+    try { renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: false, alpha: true, powerPreference: 'high-performance' }); }
+    catch (e) { root.classList.add('no-webgl'); return false; }
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.setClearColor(0x000000, 0);
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 100); camera.position.set(0, 0, 7);
+    group = new THREE.Group(); scene.add(group);
+
+    const serif = '"Cormorant Garamond", Georgia, serif';
+    const neb = nebula(), PL = planet(MOBILE_AT_LOAD ? 3500 : 7000);
+    SH = [
+      neb, docs(), helix(), null, sheet(), pen(), knot(),
+      textShape(MOBILE_AT_LOAD ? ['Victoria', 'Wachter'] : ['Victoria Wachter'], 'italic 500 180px "Bodoni Moda", "Cormorant Garamond", serif', MOBILE_AT_LOAD ? 3.3 : 6.8, { scatter: 0, depth: 0.03, stroke: 3 }),
+      textShape(['Hello'], 'italic 300 230px ' + serif, 3.6),
+      textShape(['Hallo'], 'italic 300 230px ' + serif, 3.6),
+      textShape(['안녕'], '400 220px "Gowun Batang", serif', 3.0)
+    ];
+    SH[3] = SH[WORD0];
+    const osc = (sp, amp, base = 0) => t => base + Math.sin(t * sp) * amp;
+    XF = [
+      { yaw: t => t * 0.05, tilt: 1.15, y: 0.95, sc: 1 },
+      { yaw: osc(0.4, 0.35), tilt: 0.06, y: 0, sc: 1 },
+      { yaw: t => t * 0.35, tilt: 0.1, y: 0, sc: 1 },
+      { yaw: osc(0.5, 0.25), tilt: 0, y: 0, sc: 1 },
+      { yaw: osc(0.3, 0.45, 0.35), tilt: 0.55, y: -0.1, sc: 1 },
+      { yaw: osc(0.35, 0.3), tilt: 0.05, y: 0, sc: 1 },
+      { yaw: t => t * 0.12, tilt: 0.5, y: 0, sc: 1 },
+      { yaw: osc(0.3, 0.06), tilt: 0, y: MOBILE_AT_LOAD ? 1.9 : 1.65, sc: 1 },
+      { yaw: osc(0.5, 0.25), tilt: 0, y: 0, sc: 1 },
+      { yaw: osc(0.5, 0.25), tilt: 0, y: 0, sc: 1 },
+      { yaw: osc(0.5, 0.25), tilt: 0, y: 0, sc: 1 }
+    ];
+
+    geo = new THREE.BufferGeometry();
+    const rands = new Float32Array(N); for (let i = 0; i < N; i++) rands[i] = rnd();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+    geo.setAttribute('posA', new THREE.BufferAttribute(new Float32Array(neb), 3));
+    geo.setAttribute('posB', new THREE.BufferAttribute(new Float32Array(neb), 3));
+    geo.setAttribute('aRand', new THREE.BufferAttribute(rands, 1));
+    geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 30);
+    mat = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: {
+        uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 30 : 26 },
+        uPR: { value: renderer.getPixelRatio() }, uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 0 }, uDelay: { value: 0.3 }, uCalm: { value: 0 },
+        uTA: { value: new THREE.Vector2() }, uTB: { value: new THREE.Vector2() },
+        uColA: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uColB: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uDim: { value: 1 }
+      }
+    });
+    group.add(new THREE.Points(geo, mat));
+    const n2 = PL[0].length / 3, r2 = new Float32Array(n2); for (let i = 0; i < n2; i++) r2[i] = rnd();
+    pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n2 * 3), 3));
+    pGeo.setAttribute('posA', new THREE.BufferAttribute(PL[0], 3));
+    pGeo.setAttribute('posB', new THREE.BufferAttribute(PL[1], 3));
+    pGeo.setAttribute('aRand', new THREE.BufferAttribute(r2, 1));
+    pGeo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 30);
+    pMat = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: {
+        uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 28 : 24 }, uPR: { value: renderer.getPixelRatio() },
+        uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 8 }, uDelay: { value: 0.3 }, uCalm: { value: 0.5 },
+        uTA: { value: new THREE.Vector2(0, 0.38) }, uTB: { value: new THREE.Vector2(0, 0.38) },
+        uColA: { value: new THREE.Vector3(...hex('#F0ABFC')) }, uColB: { value: new THREE.Vector3(...hex('#B9A4FF')) }, uDim: { value: 0 }
+      }
+    });
+    pGroup = new THREE.Group(); pGroup.add(new THREE.Points(pGeo, pMat)); pGroup.visible = false; scene.add(pGroup);
+    return true;
+  };
+
+  let curA = -1, curB = -1, curMode = -1, prog = 0;
+  const setPair = (A, B, mode) => {
+    curA = A; curB = B; curMode = mode;
+    geo.attributes.posA.array.set(SH[A]); geo.attributes.posA.needsUpdate = true;
+    geo.attributes.posB.array.set(SH[B]); geo.attributes.posB.needsUpdate = true;
+    mat.uniforms.uColA.value.set(...SHAPE_COL[A]); mat.uniforms.uColB.value.set(...SHAPE_COL[B]);
+    mat.uniforms.uMode.value = mode; mat.uniforms.uDelay.value = mode === 5 ? 0.06 : 0.3;
+  };
+
+  /* ---------- input ---------- */
+  let tmx = 0, tmy = 0, mx = 0, my = 0;
+  addEventListener('pointermove', e => { tmx = (e.clientX / innerWidth) * 2 - 1; tmy = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
+
+  const portrait = $('#portrait').style, stage = $('#stage').style, flash = $('#flash').style, shock = $('#shock').style, contactInner = $('.contact .inner').style;
+  const mottoLines = [...document.querySelectorAll('#motto span')], mottoSub = $('#mottoSub');
+  let glOK = false, activeStar = -1, novaOn = false;
+  let wordSettled = false, wordStart = 0, baseWord = 0, lastWord = 0;
+  const shapeOfSec = s => s === 3 ? WORD0 + baseWord : s;
+
+  const frame = now => {
+    const t = now / 1000, vh = innerHeight, y = scrollY, mobile = innerWidth < 760;
+
+    const heroP = clamp(y / Math.max(1, hs[0] - vh));
+    portrait.setProperty('--po', (1 - clamp((heroP - 0.45) / 0.5)).toFixed(3));
+    portrait.setProperty('--ps', (1 + heroP * 0.06).toFixed(3));
+    portrait.setProperty('--pb', (Math.max(0, heroP - 0.5) * 16).toFixed(1) + 'px');
+    stage.setProperty('--to', clamp(1 - heroP * 3).toFixed(3));
+    drawName(heroP, t);
+
+    const c = y + vh * 0.55;
+    let s = 0; for (let k = 0; k < tops.length; k++) if (tops[k] <= c) s = k;
+    const a = Math.max(0, s - 1), b = s;
+    const target = s === 0 ? 0 : clamp((c - tops[s]) / (s === 7 ? vh * 0.95 : hs[s] * 0.32));
+
+    // stars
+    if (s !== activeStar) { stars.forEach((g, i) => { g.classList.toggle('on', i === s); g.classList.toggle('seen', i < s); }); starBtns.forEach((bt, i) => bt.classList.toggle('on', i === s)); activeStar = s; }
+    const wantNova = s === 7 && prog > 0.22;
+    if (wantNova !== novaOn) { stars[6].classList.toggle('nova', wantNova); novaOn = wantNova; }
+    const cont = clamp((s + (s === 0 ? heroP * 0.0 : target) ) / (stars.length - 1));
+    trail.style.strokeDasharray = trailLen; trail.style.strokeDashoffset = (trailLen * (1 - cont)).toFixed(1);
+
+    // motto reveal
+    const L = (c - tops[6]) / hs[6];
+    mottoLines.forEach((el, k) => el.style.setProperty('--lo', (0.2 + 0.8 * clamp((L - 0.12 - k * 0.1) / 0.12)).toFixed(3)));
+    mottoSub.style.setProperty('--lo', (0.2 + 0.8 * clamp((L - 0.45) / 0.12)).toFixed(3));
+
+    let e = 0, A = 0, B = 0;
+    if (glOK) {
+      let mode, p, manual = false;
+      if (s === 0) { A = 0; B = 0; mode = 0; p = 0; }
+      else if (s === 3 && target >= 1 && prog > 0.985 && curB >= WORD0 - 5) {
+        if (!wordSettled) { wordSettled = true; wordStart = t; }
+        const el = t - wordStart, k = Math.floor(el / 3.4), loc = el - k * 3.4, w = (baseWord + k) % 3;
+        if (k === 0) { A = WORD0 + w; B = A; p = 1; }
+        else { A = WORD0 + (baseWord + k - 1) % 3; B = WORD0 + w; p = clamp(loc / 1.4); }
+        lastWord = w; mode = 0; manual = true;
+      } else {
+        if (wordSettled) { wordSettled = false; baseWord = lastWord; }
+        A = shapeOfSec(a); B = shapeOfSec(b); mode = SEC_MODE[b]; p = target;
+      }
+      if (A !== curA || B !== curB || mode !== curMode) { setPair(A, B, mode); prog = p; }
+      else prog = manual ? p : prog + (p - prog) * 0.14;
+      e = prog * prog * (3 - 2 * prog);
+
+      const u = mat.uniforms;
+      u.uProg.value = prog; u.uTime.value = t;
+      u.uCalm.value = curB === 7 ? e : 0;
+      const TA = XF[A], TB = XF[B];
+      u.uTA.value.set(reduce ? 0 : TA.yaw(t), TA.tilt); u.uTB.value.set(reduce ? 0 : TB.yaw(t), TB.tilt);
+      const off = k => mobile ? 0 : SEC_SIDE[k] * 1.75;
+      const dim = k => (mobile && k > 0 && k < 6) ? 0.45 : (k === 6 ? 0.62 : 1);
+      const ea = s === 0 ? 0 : e;
+      if (curMode === 5) {
+        const sm = v => v * v * (3 - 2 * v);
+        group.position.x = prog < 0.55 ? lerp(off(a), 0, sm(clamp(prog / 0.25))) : lerp(0, off(b), sm(clamp((prog - 0.55) / 0.45)));
+      } else group.position.x = lerp(off(a), off(b), ea);
+      group.position.y = lerp(TA.y, TB.y, e) * (mobile && (A === 0 || B === 0) ? 1.15 : 1);
+      group.scale.setScalar(lerp(TA.sc, TB.sc, e) * (mobile ? 0.82 : 1));
+      u.uDim.value = lerp(dim(a), dim(b), ea);
+      mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
+      group.rotation.y = reduce ? 0 : mx * 0.18; group.rotation.x = reduce ? 0 : my * 0.12;
+      camera.position.z = 7 - heroP * 0.7;
+      const nova = curMode === 5 && !reduce;
+      flash.opacity = nova ? Math.exp(-Math.pow((prog - 0.26) * 7, 2)).toFixed(3) : 0;
+      const su = clamp((prog - 0.24) / 0.4);
+      shock.opacity = nova && su > 0 && su < 1 ? ((1 - su) * 0.9).toFixed(3) : 0;
+      shock.transform = 'translate(-50%, -50%) scale(' + (0.2 + su * 6).toFixed(3) + ')';
+      const shake = nova ? Math.exp(-Math.pow((prog - 0.3) * 9, 2)) * 0.06 : 0;
+      camera.position.x = Math.sin(t * 57) * shake; camera.position.y = Math.cos(t * 43) * shake;
+      const co = (reduce || s < 7 || curMode !== 5) ? 1 : clamp((prog - 0.62) / 0.3);
+      contactInner.setProperty('--co', co.toFixed(3));
+      const pv = s < 7 ? 0 : (reduce || curMode !== 5) ? 1 : clamp((prog - 0.55) / 0.25);
+      pFix += (clamp((c - tops[7] - vh * 0.95) / (vh * 0.55)) - pFix) * 0.1;
+      const pu = pMat.uniforms, pyaw = reduce ? 0 : t * 0.1;
+      pu.uProg.value = pFix; pu.uTime.value = t; pu.uDim.value = pv * 0.9;
+      pu.uTA.value.x = pyaw; pu.uTB.value.x = pyaw;
+      pGroup.visible = pv > 0.001;
+      pGroup.position.set(0, mobile ? -0.15 : -0.12, 0); pGroup.scale.setScalar(mobile ? 0.5 : 0.62);
+      pGroup.rotation.x = group.rotation.x; pGroup.rotation.y = group.rotation.y;
+      renderer.render(scene, camera);
+    }
+
+    const ca = glOK ? SHAPE_COL[curA] : SHAPE_COL[a], cb = glOK ? SHAPE_COL[curB] : SHAPE_COL[b];
+    root.style.setProperty('--glow', [0, 1, 2].map(i => Math.round(lerp(ca[i], cb[i], e) * 255)).join(','));
+    const ba = SEC_BG[a], bb = SEC_BG[b], be = s === 0 ? 0 : clamp(target);
+    root.style.setProperty('--bg', 'rgb(' + [0, 1, 2].map(i => Math.round(lerp(ba[i], bb[i], be) * 255)).join(',') + ')');
+    root.style.setProperty('--gx', (50 + (glOK ? group.position.x : 0) / 5.6 * 50).toFixed(1) + '%');
+    root.style.setProperty('--gy', (s === 0 ? 38 : s === 7 ? 32 : 50) + '%');
+
+    requestAnimationFrame(frame);
+  };
+
+  const onResize = () => {
+    measure(); layoutName();
+    trailLen = trail.getTotalLength ? trail.getTotalLength() : 300;
+    if (glOK) {
+      renderer.setSize(innerWidth, innerHeight, false);
+      camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+      mat.uniforms.uPR.value = renderer.getPixelRatio();
+      if (pMat) pMat.uniforms.uPR.value = renderer.getPixelRatio();
+    }
+  };
+
+  applyLang(lang);
+  $('#howto').addEventListener('toggle', () => requestAnimationFrame(measure));
+  document.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.jump, vh = innerHeight;
+    const top = i === 7 ? document.documentElement.scrollHeight - vh : tops[i] + hs[i] * 0.4 - vh * 0.55;
+    scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+  const start = () => {
+    glOK = initGL();
+    onResize();
+    setTimeout(() => { sky.classList.add('peek'); setTimeout(() => sky.classList.remove('peek'), 2600); }, 900);
+    addEventListener('resize', onResize);
+    requestAnimationFrame(frame);
+  };
+  const fontWait = Promise.all([
+    document.fonts.load('300 120px "Cormorant Garamond"'),
+    document.fonts.load('italic 300 120px "Cormorant Garamond"'),
+    document.fonts.load('400 120px "Gowun Batang"', '안녕'),
+    document.fonts.load('italic 500 120px "Bodoni Moda"')
+  ]).catch(() => {});
+  Promise.race([fontWait, new Promise(r => setTimeout(r, 1800))]).then(start);
+})();
+</script>

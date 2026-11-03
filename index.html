@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Victoria Wachter</title>
+<meta name="description" content="Victoria Wachter — designer at EY LABS. A portfolio told through a single cloud of 15,000 stars.">
+<meta property="og:title" content="Victoria Wachter">
+<meta property="og:description" content="Victoria Wachter — designer at EY LABS. A portfolio told through a single cloud of 15,000 stars.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="%VITE_SITE_URL%/og-image.png">
+<meta property="og:url" content="%VITE_SITE_URL%/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Gowun+Batang&family=Bodoni+Moda:ital,wght@1,500&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500&display=swap">
+
+<div class="glow" aria-hidden="true"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="flash" id="flash" aria-hidden="true"></div>
+<div class="shock" id="shock" aria-hidden="true"></div>
+<canvas id="nameCanvas" aria-hidden="true"></canvas>
+<div class="topright">
+<nav class="jumps" aria-label="Quick links">
+  <button type="button" data-jump="6" data-i="j_team"></button>
+  <button type="button" data-jump="7" data-i="j_contact"></button>
+</nav>
+<div class="langs" role="group" aria-label="Language">
+  <button type="button" data-lang="en" aria-pressed="true">EN</button>
+  <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
+  <button type="button" data-lang="de" aria-pressed="false">DE</button>
+</div>
+</div>
+<nav class="sky" id="sky" aria-label="Chapters"></nav>
+
+<main>
+  <section class="hero" data-side="center">
+    <div class="stage" id="stage">
+      <div class="fog f3"></div><div class="fog f1"></div><div class="fog f2"></div>
+      <div class="portrait" id="portrait">
+        <div class="arch">
+          <img id="photoImg" alt="Victoria Wachter" hidden>
+          <div class="photo-ph" id="photoPh">
+            <small data-i="photo"></small>
+          </div>
+        </div>
+      </div>
+      <h1 class="sr-only">Victoria Wachter</h1>
+      <div class="hero-copy">
+        <p class="role" data-i="role"></p>
+        <p class="line" data-i="tagline"></p>
+      </div>
+      <div class="cue" aria-hidden="true"><span data-i="scroll"></span><i></i></div>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="left">
+    <div class="inner">
+      <article class="card" style="--c:#C4B5FD">
+        <p class="eyebrow" data-i="a_eye"></p>
+        <h2 data-i="a_h"></h2>
+        <p class="meta" data-i="a_meta"></p>
+        <span class="loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span data-i="a_loc"></span><em>42.83° N · 108.73° W</em></span>
+        <div class="docs">
+          <div class="doc"><small data-i="a_p1l"></small><strong data-i="a_p1"></strong><i></i><i></i><i></i><span class="doc-c" data-i="a_c1"></span></div>
+          <div class="doc"><small data-i="a_p2l"></small><strong data-i="a_p2"></strong><i></i><i></i><i></i><span class="doc-c" data-i="a_c2"></span></div>
+        </div>
+        <div class="take"><span data-i="take"></span><p data-i="a_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="right">
+    <div class="inner">
+      <article class="card cert" style="--c:#F0ABFC">
+        <div class="seal" aria-hidden="true">CERT</div>
+        <p class="eyebrow" data-i="m_eye"></p>
+        <h2 data-i="m_h"></h2>
+        <ol class="med-list">
+          <li><strong data-i="md1t"></strong><span class="meta" data-i="md1m"></span><span class="loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span data-i="md1loc"></span><em>47.78° N · 9.28° E</em></span><p data-i="md1p"></p></li>
+          <li><strong data-i="md2t"></strong><span class="meta" data-i="md2m"></span><p data-i="md2p"></p></li>
+        </ol>
+        <div class="take"><span data-i="take"></span><p data-i="m_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="left">
+    <div class="inner">
+      <article class="card langs-card" style="--c:#A5B4FC">
+        <p class="eyebrow" data-i="l_eye"></p>
+        <h2 data-i="l_h"></h2>
+        <ul class="lang-list">
+          <li><span class="name">English</span><span class="lvl" data-i="fluent"></span><span class="bar"><b style="--w:100%"></b></span></li>
+          <li><span class="name">Deutsch</span><span class="lvl" data-i="fluent"></span><span class="bar"><b style="--w:100%"></b></span></li>
+          <li><span class="name ko">한국어</span><span class="lvl" data-i="moderate"></span><span class="bar"><b style="--w:58%"></b></span></li>
+          <li class="minor"><span class="name">Français</span><span class="lvl" data-i="b2"></span><span class="bar"><b style="--w:70%"></b></span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" data-side="right">
+    <div class="inner">
+      <article class="card" style="--c:#A5B4FC">
+        <div class="sheet-wrap" aria-hidden="true">
+          <div class="sheet">
+            <span class="h"></span><span class="h">A</span><span class="h">B</span>
+            <span class="h">1</span><span class="v th">Technology</span><span class="v th">g CO₂-eq/kWh</span>
+            <span class="h">2</span><span class="v">Nuclear</span><span class="v hl">5.5</span>
+            <span class="h">3</span><span class="v">Offshore wind</span><span class="v">13–23</span>
+            <span class="h">4</span><span class="v">Solar PV</span><span class="v">23–82</span>
+            <span class="h">5</span><span class="v">Natural gas</span><span class="v">403–513</span>
+          </div>
+          <div class="tabs"><span>Costs</span><span class="on">GHG emissions</span><span>Water &amp; land</span><span>Radioactive releases</span></div>
+        </div>
+        <p class="eyebrow" data-i="r_eye"></p>
+        <h2 data-i="r_h"></h2>
+        <p class="meta" data-i="r_meta"></p>
+        <p data-i="r_p"></p>
+        <div class="take"><span data-i="take"></span><p data-i="r_take"></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter now" data-side="left">
+    <div class="inner">
+      <article class="card" style="--c:#F0ABFC">
+        <p class="eyebrow" data-i="n_eye"></p>
+        <h2 data-i="n_h"></h2>
+        <p data-i="n_p"></p>
+        <div class="tiles">
+          <div class="tile"><div><strong data-i="n_t2"></strong><br><small data-i="n_t2s"></small></div><span class="chip prog" data-i="n_t2c"></span></div>
+          <div class="tile"><div><strong data-i="n_t1"></strong><br><small data-i="n_t1s"></small></div><span class="chip team" data-i="teamChip"></span></div>
+        </div>
+        <details class="howto" id="howto">
+          <summary><span data-i="h_sum"></span><i aria-hidden="true">+</i></summary>
+          <div class="how-body">
+            <p data-i="h_intro"></p>
+            <p class="how-stat" data-i="h_stat"></p>
+            <div class="how-row"><span class="how-l" data-i="h_pal"></span>
+              <div class="swatches">
+                <span style="--s:#0B0612"><b></b><em data-i="sw1"></em></span>
+                <span style="--s:#8B5CF6"><b></b><em data-i="sw2"></em></span>
+                <span style="--s:#C4B5FD"><b></b><em data-i="sw3"></em></span>
+                <span style="--s:#F0ABFC"><b></b><em data-i="sw4"></em></span>
+                <span style="--s:#818CF8"><b></b><em data-i="sw5"></em></span>
+              </div>
+            </div>
+            <div class="how-row"><span class="how-l" data-i="h_type"></span>
+              <ul class="specimens">
+                <li><span style="font-family: var(--serif)">Cormorant Garamond</span><em data-i="r1"></em></li>
+                <li><span style="font-family: 'Albert Sans', sans-serif">Albert Sans</span><em data-i="r2"></em></li>
+                <li><span style="font-family: var(--ko)">Gowun Batang 고운바탕</span><em data-i="r3"></em></li>
+                <li><span style="font-family: var(--mono); font-size: 1rem">JetBrains Mono</span><em data-i="r4"></em></li>
+              </ul>
+            </div>
+            <div class="how-row"><span class="how-l" data-i="h_proc"></span>
+              <ol class="steps"><li data-i="s1"></li><li data-i="s2"></li><li data-i="s3"></li><li data-i="s4"></li></ol>
+            </div>
+          </div>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <section class="team" data-side="center">
+    <div class="inner">
+      <p class="eyebrow" style="--c:#C4B5FD" data-i="t_eye"></p>
+      <h2 class="motto" id="motto"><span data-i="m1"></span><span data-i="m2"></span><span data-i="m3"></span></h2>
+      <p class="motto-sub" id="mottoSub" data-i="msub"></p>
+      <p class="crew"><span data-i="crew"></span> · <a href="https://www.eylabs.co.kr/" target="_blank" rel="noopener">eylabs.co.kr ↗</a></p>
+    </div>
+  </section>
+
+  <section class="contact" data-side="center">
+    <div class="contact-stage">
+      <div class="inner"><div class="contact-card">
+        <p class="eyebrow" data-i="c_eye"></p>
+        <h2 data-i="c_h"></h2>
+        <p data-i="c_p"></p>
+        <div class="links">
+          <a class="btn primary" href="https://www.linkedin.com/in/victoria-wachter-416625392" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>LinkedIn</a>
+          <a class="btn" href="mailto:seoulofvictoria@proton.me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4 7.3V17h16V7.3l-8 4.9zM4.6 7l7.4 4.5L19.4 7H4.6z"/></svg>seoulofvictoria@proton.me</a>
+        </div>
+      </div></div>
+    </div>
+  </section>
+</main>
+<footer>© 2026 Victoria Wachter</footer>
+
+<script type="module" src="/src/main.js"></script>

@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+test-results
+.omc
+.claude
+.impeccable
+scripts/.font-cache
