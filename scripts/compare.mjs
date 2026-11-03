@@ -51,8 +51,8 @@ function protoServer() {
 }
 async function appServer() {
   const port = TARGET === 'preview' ? 4173 : 5173;
-  const cmd = TARGET === 'preview' ? ['vite', 'preview', '--port', port, '--strictPort'] : ['vite', '--port', port, '--strictPort'];
-  const child = spawn('npx', cmd.map(String), { cwd: ROOT, shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  const cmd = TARGET === 'preview' ? ['vite', 'preview', '--port', port, '--strictPort', '--host', '127.0.0.1'] : ['vite', '--port', port, '--strictPort', '--host', '127.0.0.1'];
+  const child = spawn('npx ' + cmd.join(' '), { cwd: ROOT, shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';
   child.stdout.on('data', d => log += d); child.stderr.on('data', d => log += d);
   const url = `http://127.0.0.1:${port}/`;

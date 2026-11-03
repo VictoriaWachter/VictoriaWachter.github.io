@@ -9,6 +9,8 @@ export const SHAPE_COL = ['#8B5CF6', '#C4B5FD', '#E879F9', '#A5B4FC', '#818CF8',
 export const SEC_BG = ['#0B0612', '#0D0817', '#130616', '#0A0A1B', '#060A17', '#14061C', '#0B0714', '#08050F'].map(hex);
 export const SEC_MODE = [0, 1, 2, 3, 4, 7, 6, 5];
 export const WORD0 = 8;
+// sharpness per shape (0 = soft and dreamy, 1 = crisp): nebula, docs, helix, words, sheet, pen, knot, name, Hello, Hallo, 안녕
+export const CRISP = [0, 0.75, 0.75, 0.65, 1, 0.65, 0.5, 1, 0.65, 0.65, 0.65];
 
 export const secs = [...document.querySelectorAll('main > section')];
 export const SEC_SIDE = secs.map(s => s.dataset.side === 'left' ? 1 : s.dataset.side === 'right' ? -1 : 0);

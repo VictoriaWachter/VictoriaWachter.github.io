@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import VERT from './particles.vert.glsl?raw';
 import FRAG from './particles.frag.glsl?raw';
 import { clamp, lerp, hex, rnd } from '../util.js';
-import { reduce, MOBILE_AT_LOAD, N, SHAPE_COL, SEC_MODE, SEC_SIDE, WORD0, state } from '../state.js';
+import { reduce, MOBILE_AT_LOAD, N, SHAPE_COL, SEC_MODE, SEC_SIDE, WORD0, CRISP, state } from '../state.js';
 import { XF } from './transforms.js';
 import { nebula } from './shapes/nebula.js';
 import { docs } from './shapes/documents.js';
@@ -50,7 +50,7 @@ export const initGL = () => {
     vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     uniforms: {
       uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 30 : 26 },
-      uPR: { value: renderer.getPixelRatio() }, uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 0 }, uDelay: { value: 0.3 }, uCalm: { value: 0 },
+      uPR: { value: renderer.getPixelRatio() }, uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 0 }, uDelay: { value: 0.3 }, uCalm: { value: 0 }, uCrA: { value: 0 }, uCrB: { value: 0 },
       uTA: { value: new THREE.Vector2() }, uTB: { value: new THREE.Vector2() },
       uColA: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uColB: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uDim: { value: 1 }
     }
@@ -67,7 +67,7 @@ export const initGL = () => {
     vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     uniforms: {
       uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 28 : 24 }, uPR: { value: renderer.getPixelRatio() },
-      uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 8 }, uDelay: { value: 0.3 }, uCalm: { value: 0.5 },
+      uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 8 }, uDelay: { value: 0.3 }, uCalm: { value: 0.5 }, uCrA: { value: 0 }, uCrB: { value: 0 },
       uTA: { value: new THREE.Vector2(0, 0.38) }, uTB: { value: new THREE.Vector2(0, 0.38) },
       uColA: { value: new THREE.Vector3(...hex('#F0ABFC')) }, uColB: { value: new THREE.Vector3(...hex('#B9A4FF')) }, uDim: { value: 0 }
     }
@@ -81,6 +81,7 @@ export const setPair = (A, B, mode) => {
   geo.attributes.posA.array.set(SH[A]); geo.attributes.posA.needsUpdate = true;
   geo.attributes.posB.array.set(SH[B]); geo.attributes.posB.needsUpdate = true;
   mat.uniforms.uColA.value.set(...SHAPE_COL[A]); mat.uniforms.uColB.value.set(...SHAPE_COL[B]);
+  mat.uniforms.uCrA.value = CRISP[A]; mat.uniforms.uCrB.value = CRISP[B];
   mat.uniforms.uMode.value = mode; mat.uniforms.uDelay.value = mode === 5 ? 0.06 : 0.3;
 };
 

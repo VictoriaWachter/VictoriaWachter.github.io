@@ -747,7 +747,7 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
 
   const helix = () => make(() => {
     const y = (rnd() - 0.5) * 5.0, r = rnd(); let p;
-    if (r < 0.7) { const a = y * 1.5 + (rnd() < 0.5 ? 0 : Math.PI); p = [Math.cos(a) * 0.9 + gauss() * 0.04, y + gauss() * 0.04, Math.sin(a) * 0.9 + gauss() * 0.04]; }
+    if (r < 0.7) { const a = y * 1.5 + (rnd() < 0.5 ? 0 : Math.PI); p = [Math.cos(a) * 0.9 + gauss() * 0.018, y + gauss() * 0.018, Math.sin(a) * 0.9 + gauss() * 0.018]; }
     else { const yy = Math.round(y / 0.3) * 0.3, a = yy * 1.5, t = rnd() * 2 - 1; p = [Math.cos(a) * 0.9 * t, yy + gauss() * 0.015, Math.sin(a) * 0.9 * t]; }
     const c = Math.cos(0.38), s = Math.sin(0.38); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]];
   });
@@ -772,14 +772,14 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
     const C = 10, R = 7, cs = 0.42, data = [0.5, 0.9, 0.75, 1.3, 1.1, 1.7, 1.45, 2.0, 1.8, 2.3];
     return make(() => {
       const r = rnd(); let x, y, z;
-      if (r < 0.5) {
+      if (r < 0.32) {
         if (rnd() < 0.55) { const k = Math.floor(rnd() * (C + 1)); x = (k - C / 2) * cs; z = (rnd() - 0.5) * R * cs; }
         else { const k = Math.floor(rnd() * (R + 1)); z = (k - R / 2) * cs; x = (rnd() - 0.5) * C * cs; }
         y = 0;
       } else {
         const c = Math.floor(rnd() * C), row = c % 2 ? 2 : 4, h = data[c], hw = cs * 0.34;
         const bx = (c - C / 2 + 0.5) * cs, bz = (row - R / 2 + 0.5) * cs;
-        if (rnd() < 0.65) {
+        if (rnd() < 0.88) {
           const e = Math.floor(rnd() * 12), t = rnd();
           const sx = e % 2 ? 1 : -1, sz = (e >> 1) % 2 ? 1 : -1;
           if (e < 4) { x = bx + sx * hw; z = bz + sz * hw; y = t * h; }
@@ -864,6 +864,8 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
   const SEC_SIDE = secs.map(s => s.dataset.side === 'left' ? 1 : s.dataset.side === 'right' ? -1 : 0);
   const SEC_MODE = [0, 1, 2, 3, 4, 7, 6, 5];
   const WORD0 = 8;
+  // sharpness per shape (0 = soft and dreamy, 1 = crisp): nebula, docs, helix, words, sheet, pen, knot, name, Hello, Hallo, 안녕
+  const CRISP = [0, 0.75, 0.75, 0.65, 1, 0.65, 0.5, 1, 0.65, 0.65, 0.65];
 
   /* ---------- name → dust (top) ---------- */
   const nc = $('#nameCanvas'), nx = nc.getContext('2d');
@@ -920,9 +922,9 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
   /* ---------- WebGL ---------- */
   const VERT = `
     attribute vec3 posA; attribute vec3 posB; attribute float aRand;
-    uniform float uProg, uTime, uSize, uPR, uSwirl, uMode, uDelay, uCalm;
+    uniform float uProg, uTime, uSize, uPR, uSwirl, uMode, uDelay, uCalm, uCrA, uCrB;
     uniform vec2 uTA, uTB;
-    varying float vMix; varying float vA; varying float vBoost;
+    varying float vMix; varying float vA; varying float vBoost; varying float vCr;
     vec3 rY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }
     vec3 rX(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(p.x, c*p.y-s*p.z, s*p.y+c*p.z); }
     vec3 h3(float r){ return vec3(sin(r*91.3+0.7), cos(r*57.7+1.9), sin(r*33.1+4.1)); }
@@ -955,23 +957,24 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
       else if (m == 7) { p += vec3(3.0 + aRand * 3.0, 1.6 + aRand * 2.4, (aRand - 0.5) * 2.0) * k; }
       else { p = rY(p, k * 2.4 * (aRand - 0.5)); p += vec3(sin(aRand*41.0+uTime*0.7+p.y*1.7), cos(aRand*29.0+uTime*0.6+p.x*1.3), sin(aRand*17.0+uTime*0.5+p.z*1.5)) * k * 0.8; }
       if (uSwirl < 0.5) { p = mix(a, b, e); boost = 1.0; }
-      p += vec3(sin(uTime*0.9+aRand*61.0), cos(uTime*0.8+aRand*47.0), sin(uTime*0.7+aRand*73.0)) * 0.025 * uSwirl * (1.0 - 0.9 * uCalm);
+      float cr = max(mix(uCrA, uCrB, pp), uCalm);
+      p += vec3(sin(uTime*0.9+aRand*61.0), cos(uTime*0.8+aRand*47.0), sin(uTime*0.7+aRand*73.0)) * 0.025 * uSwirl * (1.0 - 0.9 * cr);
       vec4 mv = modelViewMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
-      gl_PointSize = uSize * uPR * (0.55 + aRand * 0.9) * (1.0 - 0.22 * uCalm) / -mv.z;
-      vMix = pp; vBoost = boost;
+      gl_PointSize = uSize * uPR * (0.55 + aRand * 0.9) * (1.0 - 0.25 * cr) / -mv.z;
+      vMix = pp; vBoost = boost; vCr = cr;
       vA = (0.35 + 0.55 * aRand) * (0.8 + 0.2 * sin(uTime * 2.3 + aRand * 90.0));
     }`;
   const FRAG = `
     uniform vec3 uColA, uColB; uniform float uDim;
-    varying float vMix; varying float vA; varying float vBoost;
+    varying float vMix; varying float vA; varying float vBoost; varying float vCr;
     void main(){
       float d = length(gl_PointCoord - 0.5);
       if (d > 0.5) discard;
-      float a = pow(1.0 - d * 2.0, 1.8);
+      float a = pow(1.0 - d * 2.0, mix(1.8, 3.2, vCr));
       vec3 col = mix(uColA, uColB, vMix);
       col = mix(col, vec3(1.0), clamp(a * 0.35 * vA + (vBoost - 1.0) * 0.3, 0.0, 0.85));
-      gl_FragColor = vec4(col, a * vA * uDim * min(vBoost, 2.6));
+      gl_FragColor = vec4(col, a * vA * uDim * min(vBoost, 2.6) * (1.0 + 0.45 * vCr));
     }`;
 
   let renderer, scene, camera, group, geo, mat, SH = [], XF = [], pGeo, pMat, pGroup, pFix = 0;
@@ -1019,7 +1022,7 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
       vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       uniforms: {
         uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 30 : 26 },
-        uPR: { value: renderer.getPixelRatio() }, uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 0 }, uDelay: { value: 0.3 }, uCalm: { value: 0 },
+        uPR: { value: renderer.getPixelRatio() }, uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 0 }, uDelay: { value: 0.3 }, uCalm: { value: 0 }, uCrA: { value: 0 }, uCrB: { value: 0 },
         uTA: { value: new THREE.Vector2() }, uTB: { value: new THREE.Vector2() },
         uColA: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uColB: { value: new THREE.Vector3(...SHAPE_COL[0]) }, uDim: { value: 1 }
       }
@@ -1036,7 +1039,7 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
       vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       uniforms: {
         uProg: { value: 0 }, uTime: { value: 0 }, uSize: { value: MOBILE_AT_LOAD ? 28 : 24 }, uPR: { value: renderer.getPixelRatio() },
-        uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 8 }, uDelay: { value: 0.3 }, uCalm: { value: 0.5 },
+        uSwirl: { value: reduce ? 0 : 1 }, uMode: { value: 8 }, uDelay: { value: 0.3 }, uCalm: { value: 0.5 }, uCrA: { value: 0 }, uCrB: { value: 0 },
         uTA: { value: new THREE.Vector2(0, 0.38) }, uTB: { value: new THREE.Vector2(0, 0.38) },
         uColA: { value: new THREE.Vector3(...hex('#F0ABFC')) }, uColB: { value: new THREE.Vector3(...hex('#B9A4FF')) }, uDim: { value: 0 }
       }
@@ -1051,6 +1054,7 @@ footer { position: relative; z-index: 2; text-align: center; padding-block: 24px
     geo.attributes.posA.array.set(SH[A]); geo.attributes.posA.needsUpdate = true;
     geo.attributes.posB.array.set(SH[B]); geo.attributes.posB.needsUpdate = true;
     mat.uniforms.uColA.value.set(...SHAPE_COL[A]); mat.uniforms.uColB.value.set(...SHAPE_COL[B]);
+    mat.uniforms.uCrA.value = CRISP[A]; mat.uniforms.uCrB.value = CRISP[B];
     mat.uniforms.uMode.value = mode; mat.uniforms.uDelay.value = mode === 5 ? 0.06 : 0.3;
   };
 
